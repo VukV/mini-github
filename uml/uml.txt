@@ -1,0 +1,39 @@
+class User {
+
+}
+
+class Repository {
+
+}
+
+class Project {
+
+}
+
+class Commit {
+
+}
+
+class PullRequest {
+
+}
+
+class Branch {
+
+}
+
+class Milestone {
+
+}
+
+class Issue {
+
+}
+
+class Label {
+
+}
+
+class History {
+
+}
