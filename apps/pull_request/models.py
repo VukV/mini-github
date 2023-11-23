@@ -15,3 +15,6 @@ class PullRequest(models.Model):
     reviewers = models.ManyToManyField(User, related_name='reviewers')
     reviewed = models.BooleanField(default=False)
     labels = models.ManyToManyField(Label)
+
+    def __str__(self):
+        return '{name} by {author}'.format(name=self.name, author=self.author.username)

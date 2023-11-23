@@ -15,4 +15,4 @@ class Commit(models.Model):
     branches = models.ManyToManyField(Branch, related_name='commits')
 
     def __str__(self):
-        return 'Commit by {author}, {datetime}'.format(author=self.author, datetime=self.date_time_created)
+        return 'Commit by {author}, {datetime}'.format(author=self.author.username, datetime=self.date_time_created)
