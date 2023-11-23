@@ -98,12 +98,12 @@ Repository "0..*" -- "0..*" User : stars
 Issue "0..*" -- "1" Milestone
 Issue "0..*" -- "1" Project
 Issue "0..*" -- "0..*" Label : labels
-Issue "0..*" -- "1" User : createdBy
+Issue "0..*" -- "1" User : author
 Issue "0..*" -- "0..*" User : assignee
-Branch "0..*" -- "1" Repository
+Branch "1..*" -- "1" Repository
 Commit "0..*" -- "1" User : author
 Commit "0..*" -- "1" Repository
-Commit "0..*" -- "0..*" Branch
+Commit "0..*" -- "1..*" Branch
 PullRequest "0..*" -- "1" User : author
 PullRequest "0..*" -- "0..*" User : reviewers
 PullRequest "0..*" -- "0..*" Label
