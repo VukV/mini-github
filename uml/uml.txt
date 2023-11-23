@@ -1,39 +1,101 @@
-class User {
+@startuml
 
+class User {
+    id: Long
+    email: String
+    username: String
+    password: String
 }
 
 class Repository {
-
+    id: Long
+    name: String
+    public: Boolean
 }
 
 class Project {
-
+    id: Long
+    name: String
+    description: String
 }
 
 class Commit {
-
+    id: Long
+    ###
 }
 
 class PullRequest {
-
+    id: Long
+    ###
 }
 
 class Branch {
-
+    id: Long
+    ###
 }
 
 class Milestone {
-
+    id: Long
+    name: String
+    description: String
+    dateCreated: Date
+    dateDue: Date
+    dateClosed: Date
+    closed: Boolean
 }
 
 class Issue {
+    id: Long
+    name: String
+    description: String
+    dateCreated: Date
+    status: IssueStatus
+    closed: Boolean
+}
 
+enum IssueStatus {
+    TODO
+    IN_PROGRESS
+    DONE
 }
 
 class Label {
-
+    id: Long
+    name: String
+    description: String
+    color: String
 }
 
 class History {
-
+    id: Long
+    dateChanged: Date
+    type: HistoryType
+    changedId: Long
 }
+
+enum HistoryType {
+    PROJECT
+    MILESTONE
+    ISSUE
+    LABEL
+}
+
+
+Repository "1" -- "0..*" Project
+Repository "1" -- "0..*" Milestone
+Repository "1" -- "0..*" Label
+Repository "1" -- "0..*" Issue
+Repository "0..*" -- "1" User : owner
+Repository "0..*" -- "0..*" User : collaborators
+Repository "0..*" -- "0..*" User : watchers
+Repository "0..*" -- "0..*" User : stars
+Issue "0..*" -- "1" Milestone
+Issue "0..*" -- "1" Project
+Issue "0..*" -- "0..*" Label : labels
+Issue "0..*" -- "1" User : createdBy
+Issue "0..*" -- "0..*" User : assignee
+
+History "0..*" -- "1" User
+
+
+@enduml

@@ -1,3 +1,5 @@
+from enum import Enum
+
 from django.contrib.auth.models import User
 from django.db import models
 from datetime import datetime
@@ -8,10 +10,19 @@ from apps.repository.models import Repository
 from apps.label.models import Label
 
 
+class IssueStatus(Enum):
+    TODO = 'To Do'
+    IN_PROGRESS = 'In Progress'
+    DONE = 'Done'
+
+
+ISSUE_STATUS = [(status.name, status.value) for status in IssueStatus]
+
+
 class Issue(models.Model):
-    title = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     description = models.TextField()
-    # TODO status
+    status = models.CharField(max_length=20, choices=ISSUE_STATUS, default=IssueStatus.TODO.name)
     closed = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=datetime.now())
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE)

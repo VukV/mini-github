@@ -5,7 +5,7 @@ from apps.repository.models import Repository
 
 
 class Milestone(models.Model):
-    title = models.CharField(max_length=25, blank=False)
+    name = models.CharField(max_length=25, blank=False)
     description = models.TextField()
     date_created = models.DateField(default=date.today)
     date_due = models.DateField()
