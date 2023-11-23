@@ -21,7 +21,7 @@ def login(request):
 
             if user is not None:
                 auth_login(request, user)
-                return redirect('home')  # TODO home
+                return redirect('/home')
             else:
                 messages.error(request, 'Invalid username or password')
     else:
@@ -42,7 +42,7 @@ def register(request):
             user = authenticate(username=username, password=password)
             auth_login(request, user)
 
-            return redirect('home')  # Replace 'home' with your desired redirect
+            return redirect('/home')
     else:
         form = RegisterForm()
 
