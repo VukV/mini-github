@@ -17,7 +17,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from mini_github import views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('authentication/', include('apps.authentication.urls'))
+    path('authentication/', include('apps.authentication.urls')),
+    path('', views.home, name='home'),
+    path('branch/', include('apps.branch.urls')),
+    path('commit/', include('apps.commit.urls')),
+    path('history/', include('apps.history.urls')),
+    path('issue/', include('apps.issue.urls')),
+    path('label/', include('apps.label.urls')),
+    path('milestone/', include('apps.milestone.urls')),
+    path('project/', include('apps.project.urls')),
+    path('pull-request/', include('apps.pull_request.urls')),
+    path('repository/', include('apps.repository.urls')),
 ]

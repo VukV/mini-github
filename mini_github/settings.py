@@ -38,7 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.authentication'
+    'apps.authentication',
+    'apps.branch',
+    'apps.commit',
+    'apps.history',
+    'apps.issue',
+    'apps.label',
+    'apps.milestone',
+    'apps.project',
+    'apps.pull_request',
+    'apps.repository'
 ]
 
 MIDDLEWARE = [
@@ -77,8 +86,12 @@ WSGI_APPLICATION = 'mini_github.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # postgresql_psycopg2
+        'NAME': 'mini-github',
+        'USER': 'postgres',
+        'PASSWORD': 'vuk123',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
 
@@ -87,18 +100,21 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.authentication.password_validation.UserAttributeSimilarityValidator',
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.authentication.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        'NAME': 'django.contrib.authentication.password_validation.CommonPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        'NAME': 'django.contrib.authentication.password_validation.NumericPasswordValidator',
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_URL = 'authentication/login'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
