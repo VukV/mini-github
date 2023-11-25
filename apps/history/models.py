@@ -6,6 +6,7 @@ from datetime import datetime
 
 
 class HistoryType(Enum):
+    REPOSITORY = 'Repository'
     PROJECT = 'Project'
     MILESTONE = 'Milestone'
     ISSUE = 'Issue'
@@ -21,3 +22,5 @@ class History(models.Model):
     date_time_changed = models.DateTimeField(default=datetime.now())
     type = models.CharField(max_length=20, choices=HISTORY_TYPE, blank=False, null=False)
     changed_id = models.BigIntegerField(null=False)
+    changed_action = models.CharField(max_length=20, blank=False, null=False)
+    changed_name = models.CharField(max_length=50, blank=False, null=False)
