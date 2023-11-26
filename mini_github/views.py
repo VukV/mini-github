@@ -25,4 +25,4 @@ def dashboard(request):
         'recent_activity': recent_activity,
     }
 
-    return render(request, '', context)
+    return render(request, 'home/dashboard.html', context)

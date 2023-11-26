@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from datetime import datetime
 
+from django.utils import timezone
+
 from apps.milestone.models import Milestone
 from apps.project.models import Project
 from apps.repository.models import Repository
@@ -24,13 +26,13 @@ class Issue(models.Model):
     description = models.TextField()
     status = models.CharField(max_length=20, choices=ISSUE_STATUS, default=IssueStatus.TODO.name)
     closed = models.BooleanField(default=False)
-    date_created = models.DateTimeField(default=datetime.now())
+    date_created = models.DateTimeField(default=timezone.now)
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, related_name='issues')
     project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True, related_name='issues')
     milestone = models.ForeignKey(Milestone, on_delete=models.CASCADE, null=True, blank=True, related_name='issues')
     labels = models.ManyToManyField(Label, blank=True, related_name='issues')
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='issues')
-    assignees = models.ManyToManyField(User, null=True, blank=True, related_name='assigned_issues')
+    assignees = models.ManyToManyField(User, blank=True, related_name='assigned_issues')
 
     def __str__(self):
         return self.name
