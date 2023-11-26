@@ -13,7 +13,7 @@ def repository_detail(request, repository_id):
 
     if not repository.check_access(request.user):
         error_message = 'You do not have access to this repository.'
-        return render(request, 'repository/repository.html', {'error_message': error_message})
+        return render(request, 'error.html', {'error_message': error_message})
 
     return render(request, 'repository/repository.html', {'repository': repository})
 
