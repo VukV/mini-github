@@ -14,7 +14,7 @@
             <br><br>
             {% for repo in repositories %}
                 <div>
-                    <h5>{{ repo.name }}</h5>
+                    <h5><a href="{% url 'repository' repo.id %}">{{ repo.name }}</a></h5>
                     <hr>
                 </div>
             {% empty %}
@@ -28,8 +28,7 @@
             <br>
             {% for activity in recent_activity %}
                 <div>
-                    <h5>{{ activity.changed_name }}</h5>
-                    <p>{{ activity.changed_action }}</p>
+                    <h5>{{ activity }}</h5>
                     <p>
                         <small class="text-muted">{{ activity.date_time_changed }}</small>
                     </p>

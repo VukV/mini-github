@@ -17,7 +17,7 @@ class Repository(models.Model):
         if self.public:
             return True
         else:
-            return False
+            return self.check_user(user)
 
     def check_user(self, user):
         if self.owner == user:

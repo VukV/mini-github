@@ -8,15 +8,25 @@ from django.utils import timezone
 
 
 class HistoryType(Enum):
-    REPOSITORY = 'Repository'
-    PROJECT = 'Project'
-    MILESTONE = 'Milestone'
-    ISSUE = 'Issue'
-    LABEL = 'Label'
+    REPOSITORY = 'repository'
+    PROJECT = 'project'
+    MILESTONE = 'milestone'
+    ISSUE = 'issue'
+    LABEL = 'label'
     # TODO check for more types
 
 
 HISTORY_TYPE = [(history_type.name, history_type.value) for history_type in HistoryType]
+
+
+class ChangeAction(Enum):
+    CREATED = 'created'
+    DELETED = 'deleted'
+    OPENED = 'opened'
+    CLOSED = 'closed'
+
+
+CHANGE_ACTION = [(change_action.name, change_action.value) for change_action in ChangeAction]
 
 
 class History(models.Model):
@@ -24,5 +34,13 @@ class History(models.Model):
     date_time_changed = models.DateTimeField(default=timezone.now)
     type = models.CharField(max_length=20, choices=HISTORY_TYPE, blank=False, null=False)
     changed_id = models.BigIntegerField(null=False)
-    changed_action = models.CharField(max_length=20, null=False)
+    changed_action = models.CharField(max_length=20, choices=CHANGE_ACTION, null=False)
     changed_name = models.CharField(max_length=50, null=False)
+
+    def __str__(self):
+        return '{user} {action} {type}: {name}'.format(
+            user=self.user_changed.username,
+            action=self.changed_action,
+            type=self.type,
+            name=self.changed_name
+        )
