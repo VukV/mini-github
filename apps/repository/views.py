@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.history.models import ChangeAction, HistoryType
@@ -45,3 +47,104 @@ def create_repository(request):
         form = RepositoryForm()
 
     return render(request, 'repository/repository_create.html', {'form': form})
+
+
+@login_required()
+def repository_settings(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if repository.owner != request.user:
+        error_message = 'You do not have access to repository settings.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    return render(request, 'repository/repository_settings.html', {'repository': repository})
+
+
+@login_required()
+def delete_repository(request, repository_id):
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if request.user != repository.owner:
+        error_message = 'You do not have permission to delete this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    utils.create_history_item(
+        user=request.user,
+        history_type=HistoryType.REPOSITORY.value,
+        changed_id=repository.id,
+        changed_action=ChangeAction.DELETED.value,
+        changed_name=repository.name
+    )
+    repository.delete()
+
+    return redirect('dashboard')
+
+
+@login_required()
+def change_repository_visibility(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if request.user != repository.owner:
+        error_message = 'You do not have permission to change visibility.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.method == 'POST':
+        visibility = request.POST.get('visibility') == 'public'
+        repository.public = visibility
+        repository.save()
+
+    return redirect('repository_settings', repository_id=repository_id)
+
+
+@login_required()
+def rename_repository(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if request.user != repository.owner:
+        error_message = 'You do not have permission to change repository name.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.method == 'POST':
+        new_name = request.POST.get('name')
+        repository.name = new_name
+        repository.save()
+
+    return redirect('repository_settings', repository_id=repository_id)
+
+
+@login_required()
+def add_collaborator(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if request.user != repository.owner:
+        error_message = 'You do not have permission to change repository name.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        try:
+            user = User.objects.get(username=username)
+            repository.collaborators.add(user)
+        except User.DoesNotExist:
+            error_message = 'User does not exist.'
+            messages.error(request, error_message)
+
+    return redirect('repository_settings', repository_id=repository_id)
+
+
+@login_required()
+def remove_collaborator(request, repository_id, user_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if request.user != repository.owner:
+        error_message = 'You do not have permission to change repository name.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    try:
+        user = User.objects.get(id=user_id)
+        repository.collaborators.remove(user)
+    except User.DoesNotExist:
+        error_message = 'User does not exist.'
+        messages.error(request, error_message)
+
+    return redirect('repository_settings', repository_id=repository_id)

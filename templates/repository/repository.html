@@ -19,7 +19,7 @@
         <div class="col">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Code</a>
+                    <a class="nav-link active" aria-current="page" href="{% url 'repository' repository.id %}">Code</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Issues</a>
@@ -40,7 +40,7 @@
                     <a class="nav-link" href="#">Insights</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Settings</a>
+                    <a class="nav-link" href="{% url 'repository_settings' repository.id %}">Settings</a>
                 </li>
             </ul>
         </div>
@@ -63,7 +63,7 @@
                 <p>{{ repository.watchers.count }} watching</p>
             </div>
             <div>
-                <strong>Contributors</strong>
+                <strong>Collaborators</strong>
                 {% if repository.collaborators.count == 0 %}
                     <p>No added contributors</p>
                 {% else %}
