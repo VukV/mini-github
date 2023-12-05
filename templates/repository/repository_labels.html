@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Labels</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Add New Label Button -->
+    <div class="mb-3">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addLabelModal">Add New Label</button>
+    </div>
+
+    <!-- Labels Section -->
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Labels</h5>
+            <!-- List of Labels -->
+            {% for label in labels %}
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span style="color:{{ label.color }};">{{ label.name }}</span>
+                    <!-- Add buttons for edit and delete actions -->
+                </div>
+            {% empty %}
+                <p>No labels yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content %}
