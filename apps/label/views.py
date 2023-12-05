@@ -53,8 +53,24 @@ def add_label(request, repository_id):
 
 @login_required()
 def edit_label(request, repository_id, label_id):
-    # Logic to handle label editing
-    pass
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    label = get_object_or_404(Label, id=label_id, repository=repository)
+
+    if request.method == 'POST':
+        form = LabelForm(request.POST, instance=label)
+
+        if form.is_valid():
+            form.save()
+            return redirect('repository_labels', repository_id=repository.id)
+    else:
+        form = LabelForm(instance=label)
+
+    return render(request, 'repository/labels/edit_label.html', {'form': form, 'repository': repository})
 
 
 @login_required()
