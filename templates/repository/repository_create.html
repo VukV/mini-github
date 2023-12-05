@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create a new repository</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <!-- Repository Name Field -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Repository Name:</label>
+                            <input type="text" name="name" id="id_name" class="form-control" required>
+                        </div>
+                        <!-- Public/Private Field -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" name="public" id="id_public" class="form-check-input" {% if form.public.value %}checked{% endif %}>
+                            <label for="id_public" class="form-check-label">Public</label>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <a href="{% url 'dashboard' %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

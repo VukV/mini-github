@@ -16,7 +16,7 @@ import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-sys.path.append(os.path.join(BASE_DIR, 'apps'))  # find all apps in /apps
+# sys.path.append(os.path.join(BASE_DIR, 'apps'))  # find all apps in /apps
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -38,7 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'apps.user'
+    'apps.authentication',
+    'apps.branch',
+    'apps.commit',
+    'apps.history',
+    'apps.issue',
+    'apps.label',
+    'apps.milestone',
+    'apps.project',
+    'apps.pull_request',
+    'apps.repository'
 ]
 
 MIDDLEWARE = [
@@ -77,8 +86,12 @@ WSGI_APPLICATION = 'mini_github.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',  # postgresql_psycopg2
+        'NAME': 'mini-github',
+        'USER': 'postgres',
+        'PASSWORD': 'vuk123',
+        'HOST': 'localhost',
+        'PORT': 5432,
     }
 }
 
@@ -99,6 +112,9 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+LOGIN_URL = 'authentication/login'
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

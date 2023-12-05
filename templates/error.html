@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <h1 class="text-danger">ERROR!</h1>
+    {% if error_message %}
+        <h3>{{ error_message }}</h3>
+    {% endif %}
+
+</div>
+{% endblock content %}
