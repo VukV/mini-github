@@ -1,7 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 
+from apps.label.forms import LabelForm
 from apps.repository.models import Repository
+from mini_github import utils
 
 
 @login_required()
@@ -18,13 +20,33 @@ def labels_from_repository(request, repository_id):
         'labels': labels
     }
 
-    return render(request, 'repository/repository_labels.html', render_object)
+    return render(request, 'repository/labels/repository_labels.html', render_object)
 
 
 @login_required()
 def add_label(request, repository_id):
-    # Logic to handle adding a new label
-    pass
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.method == 'POST':
+        form = LabelForm(request.POST)
+
+        if form.is_valid():
+            label = form.save(commit=False)
+            label.repository = repository
+            label.save()
+
+            return redirect('repository_labels', repository_id=repository.id)
+        else:
+            error_message = utils.get_error_message(form)
+            return render(request, 'repository/labels/add_label.html', {'error_message': error_message})
+    else:
+        form = LabelForm()
+
+    return render(request, 'repository/labels/add_label.html', {'form': form, 'repository': repository})
 
 
 @login_required()

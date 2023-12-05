@@ -54,25 +54,38 @@
         {% endfor %}
     {% endif %}
 
-    <!-- Add New Label Button -->
-    <div class="mb-3">
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addLabelModal">Add New Label</button>
-    </div>
-
-    <!-- Labels Section -->
-    <div class="card mb-3">
-        <div class="card-body">
+    <!-- Add New Button -->
+    <div class="row mb-3">
+        <div class="col-10 d-flex justify-content-between">
+            <!-- Labels Card Title -->
             <h5 class="card-title">Labels</h5>
-            <!-- List of Labels -->
-            {% for label in labels %}
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span style="color:{{ label.color }};">{{ label.name }}</span>
-                    <!-- Add buttons for edit and delete actions -->
-                </div>
-            {% empty %}
-                <p>No labels yet.</p>
-            {% endfor %}
+            <!-- Add New Label Button -->
+            <a href="{% url 'add_label' repository.id %}" class="btn btn-success">Create Label</a>
         </div>
     </div>
+
+    <!-- Labels Card -->
+    <div class="row">
+        <div class="col-10">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <!-- List of Labels -->
+                    {% for label in labels %}
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span style="color:{{ label.color }};">{{ label.name }}</span>
+                            <!-- Edit and Delete Buttons -->
+                            <div>
+                                <a href="{% url 'edit_label' repository.id label.id %}" class="btn btn-sm btn-secondary">Edit</a>
+                                <a href="{% url 'delete_label' repository.id label.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p>No labels yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock content %}
