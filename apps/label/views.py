@@ -94,11 +94,11 @@ def delete_label(request, repository_id, label_id):
 
     if label.issues.exists():
         error_message = 'Label is in use by issue(s).'
-        return render(request, 'repository/labels/repository_labels.html', {'error_message': error_message})
+        redirect_on_delete(request, error_message, repository)
 
     if label.pull_requests:
         error_message = 'Label is in use by pull request(s).'
-        return render(request, 'repository/labels/repository_labels.html', {'error_message': error_message})
+        redirect_on_delete(request, error_message, repository)
 
     utils.create_history_item(
         user=request.user,
@@ -110,3 +110,11 @@ def delete_label(request, repository_id, label_id):
     label.delete()
 
     return redirect('repository_labels', repository_id=repository.id)
+
+
+def redirect_on_delete(request, message, repository):
+    render_object = {
+        'error_message': message,
+        'repository': repository
+    }
+    return render(request, 'repository/labels/repository_labels.html', render_object)
