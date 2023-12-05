@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
+from apps.history.models import HistoryType, ChangeAction
 from apps.label.forms import LabelForm
 from apps.label.models import Label
 from apps.repository.models import Repository
@@ -40,6 +41,14 @@ def add_label(request, repository_id):
             label = form.save(commit=False)
             label.repository = repository
             label.save()
+
+            utils.create_history_item(
+                user=request.user,
+                history_type=HistoryType.ISSUE.value,
+                changed_id=label.id,
+                changed_action=ChangeAction.CREATED.value,
+                changed_name=label.name
+            )
 
             return redirect('repository_labels', repository_id=repository.id)
         else:
@@ -91,6 +100,13 @@ def delete_label(request, repository_id, label_id):
         error_message = 'Label is in use by pull request(s).'
         return render(request, 'repository/labels/repository_labels.html', {'error_message': error_message})
 
+    utils.create_history_item(
+        user=request.user,
+        history_type=HistoryType.ISSUE.value,
+        changed_id=label.id,
+        changed_action=ChangeAction.DELETED.value,
+        changed_name=label.name
+    )
     label.delete()
 
     return redirect('repository_labels', repository_id=repository.id)
