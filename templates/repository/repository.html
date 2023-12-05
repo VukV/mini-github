@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }}</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Repository Content and Sidebar -->
+    <div class="row">
+        <div class="col-md-9">
+            <!-- Placeholder -->
+            <div class="border p-3">
+                <p>Placeholder for repository content.</p>
+            </div>
+        </div>
+
+        <!-- Sidebar Area -->
+        <div class="col-md-3">
+            <div class="mb-3">
+                <strong>About</strong>
+                <p>{{ repository.stars.count }} stars</p>
+                <p>{{ repository.watchers.count }} watching</p>
+            </div>
+            <div>
+                <strong>Collaborators</strong>
+                {% if repository.collaborators.count == 0 %}
+                    <p>No added contributors</p>
+                {% else %}
+                    {% for contributor in repository.collaborators.all|slice:":5" %}
+                        <p>{{ contributor.username }}</p>
+                    {% endfor %}
+                    {% if repository.collaborators.count > 5 %}
+                        <p>And more...</p>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

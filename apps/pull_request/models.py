@@ -2,13 +2,15 @@ from django.contrib.auth.models import User
 from django.db import models
 from datetime import date
 
+from django.utils import timezone
+
 from apps.branch.models import Branch
 from apps.label.models import Label
 
 
 class PullRequest(models.Model):
     name = models.CharField(max_length=50)
-    date_created = models.DateField(default=date.today())
+    date_created = models.DateField(default=timezone.now)
     source = models.ForeignKey(Branch, related_name='source', null=True, on_delete=models.CASCADE)
     target = models.ForeignKey(Branch, related_name='target', null=True, on_delete=models.CASCADE)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)

@@ -23,6 +23,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('authentication/', include('apps.authentication.urls')),
     path('', views.home, name='home'),
+    path('dashboard/', views.dashboard, name='dashboard'),
     path('branch/', include('apps.branch.urls')),
     path('commit/', include('apps.commit.urls')),
     path('history/', include('apps.history.urls')),
