@@ -44,7 +44,7 @@ def add_label(request, repository_id):
 
             utils.create_history_item(
                 user=request.user,
-                history_type=HistoryType.ISSUE.value,
+                history_type=HistoryType.LABEL.value,
                 changed_id=label.id,
                 changed_action=ChangeAction.CREATED.value,
                 changed_name=label.name
@@ -102,7 +102,7 @@ def delete_label(request, repository_id, label_id):
 
     utils.create_history_item(
         user=request.user,
-        history_type=HistoryType.ISSUE.value,
+        history_type=HistoryType.LABEL.value,
         changed_id=label.id,
         changed_action=ChangeAction.DELETED.value,
         changed_name=label.name
