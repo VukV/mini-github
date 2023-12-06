@@ -14,9 +14,9 @@ class PullRequest(models.Model):
     source = models.ForeignKey(Branch, related_name='source', null=True, on_delete=models.CASCADE)
     target = models.ForeignKey(Branch, related_name='target', null=True, on_delete=models.CASCADE)
     author = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
-    reviewers = models.ManyToManyField(User, related_name='reviewers')
+    reviewers = models.ManyToManyField(User, related_name='pull_requests')
     reviewed = models.BooleanField(default=False)
-    labels = models.ManyToManyField(Label)
+    labels = models.ManyToManyField(Label, related_name='pull_requests')
 
     def __str__(self):
         return '{name} by {author}'.format(name=self.name, author=self.author.username)

@@ -34,7 +34,7 @@
                     <a class="nav-link" href="#">Milestones</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Labels</a>
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Insights</a>
@@ -65,7 +65,7 @@
             <div>
                 <strong>Collaborators</strong>
                 {% if repository.collaborators.count == 0 %}
-                    <p>No added contributors</p>
+                    <p>No added collaborators</p>
                 {% else %}
                     {% for contributor in repository.collaborators.all|slice:":5" %}
                         <p>{{ contributor.username }}</p>

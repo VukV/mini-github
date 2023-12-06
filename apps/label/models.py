@@ -7,7 +7,7 @@ from colorfield.fields import ColorField
 class Label(models.Model):
     name = models.CharField(max_length=25, blank=False)
     description = models.TextField()
-    color = ColorField(format='hexa')
+    color = ColorField(format='hex')
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, null=False, related_name='labels')
 
     def __str__(self):
