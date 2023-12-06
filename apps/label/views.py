@@ -53,7 +53,11 @@ def add_label(request, repository_id):
             return redirect('repository_labels', repository_id=repository.id)
         else:
             error_message = utils.get_error_message(form)
-            return render(request, 'repository/labels/add_label.html', {'error_message': error_message})
+            render_object = {
+                'error_message': error_message,
+                'repository': repository
+            }
+            return render(request, 'repository/labels/add_label.html', render_object)
     else:
         form = LabelForm()
 
@@ -94,11 +98,11 @@ def delete_label(request, repository_id, label_id):
 
     if label.issues.exists():
         error_message = 'Label is in use by issue(s).'
-        redirect_on_delete(request, error_message, repository)
+        return redirect_on_delete(request, error_message, repository)
 
-    if label.pull_requests:
+    if label.pull_requests.exists():
         error_message = 'Label is in use by pull request(s).'
-        redirect_on_delete(request, error_message, repository)
+        return redirect_on_delete(request, error_message, repository)
 
     utils.create_history_item(
         user=request.user,

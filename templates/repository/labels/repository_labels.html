@@ -46,13 +46,11 @@
         </div>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
 
     <!-- Add New Button -->
     <div class="row mb-3">
