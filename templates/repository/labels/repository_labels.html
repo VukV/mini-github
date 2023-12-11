@@ -31,7 +31,7 @@
                     <a class="nav-link" href="#">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Milestones</a>
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'repository_labels' repository.id %}">Labels</a>
@@ -54,10 +54,7 @@
 
     <!-- Add New Button -->
     <div class="row mb-3">
-        <div class="col-10 d-flex justify-content-between">
-            <!-- Labels Card Title -->
-            <h5 class="card-title">Labels</h5>
-            <!-- Add New Label Button -->
+        <div class="col-10">
             <a href="{% url 'add_label' repository.id %}" class="btn btn-success">Create Label</a>
         </div>
     </div>

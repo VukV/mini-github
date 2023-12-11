@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Milestones</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col">
+            <a href="{% url 'add_milestone' repository.id %}" class="btn btn-success">New Milestone</a>
+            <br><br>
+            <div class="list-group">
+                {% for milestone in milestones %}
+                <div class="list-group-item">
+                    <div class="d-flex w-100 justify-content-between">
+                        <h5 class="mb-1">{{ milestone.name }}</h5>
+                        <small>Milestone created: {{ milestone.date_created }}</small>
+                    </div>
+                    <p class="mb-1">{{ milestone.description }}</p>
+                    <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: {{ milestone.get_complete_percentage }}%;" aria-valuenow="{{ milestone.get_complete_percentage }}" aria-valuemin="0" aria-valuemax="100">{{ milestone.get_complete_percentage }}%</div>
+                    </div>
+                    <small>{{ milestone.get_closed_issue_count }} closed / {{ milestone.get_issue_count }} total</small>
+                    <div class="mt-2">
+                        <a href="{% url 'edit_milestone' repository.id milestone.id %}" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="{% url 'close_milestone' repository.id milestone.id %}" class="btn btn-secondary btn-sm">{{ milestone.closed|yesno:"Reopen,Close" }}</a>
+                        <a href="{% url 'delete_milestone' repository.id milestone.id %}" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="list-group-item">
+                    No milestones found.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
