@@ -63,9 +63,12 @@
         {% for issue in issues %}
         <div class="list-group-item">
             <div class="row">
-                <!-- Left Column for Title and Description -->
+                <!-- Left Column for Name and Description -->
                 <div class="col-md-4">
-                    <h5>{{ issue.name }}</h5>
+                    <h5>
+                        {{ issue.name }}
+                        {% if issue.closed %}<span class="text-danger">(CLOSED)</span>{% endif %}
+                    </h5>
                     <p>{{ issue.description|truncatechars:100 }}</p>
                     <small>Created by {{ issue.author.username }}</small>
                 </div>

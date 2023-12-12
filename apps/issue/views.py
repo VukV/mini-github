@@ -19,7 +19,7 @@ def issues_from_repository(request, repository_id):
         error_message = 'You do not have access to this repository.'
         return render(request, 'error.html', {'error_message': error_message})
 
-    issues = repository.issues.all().order_by('-date_created')
+    issues = repository.issues.all().order_by('closed', '-date_created')
     render_object = {
         'repository': repository,
         'issues': issues
