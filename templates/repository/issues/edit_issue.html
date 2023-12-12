@@ -66,7 +66,7 @@
                             <label for="id_assignees" class="form-label">Assignees:</label>
                             <select name="assignees" id="id_assignees" class="form-control" multiple>
                                 {% for collaborator in repository.collaborators.all %}
-                                    <option value="{{ collaborator.id }}" {% if collaborator in issue.assignees.all %}selected{% endif %}>{{ collaborator.get_full_name }}</option>
+                                    <option value="{{ collaborator.id }}" {% if collaborator in issue.assignees.all %}selected{% endif %}>{{ collaborator.username }}</option>
                                 {% endfor %}
                             </select>
                         </div>
