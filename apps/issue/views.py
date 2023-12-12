@@ -105,7 +105,33 @@ def add_issue(request, repository_id):
 
 @login_required()
 def close_issue(request, repository_id, issue_id):
-    pass
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, pk=issue_id, repository=repository)
+    issue.change_closed()
+
+    if issue.closed:
+        utils.create_history_item(
+            user=request.user,
+            history_type=HistoryType.ISSUE.value,
+            changed_id=issue.id,
+            changed_action=ChangeAction.CLOSED.value,
+            changed_name=issue.name
+        )
+    else:
+        utils.create_history_item(
+            user=request.user,
+            history_type=HistoryType.ISSUE.value,
+            changed_id=issue.id,
+            changed_action=ChangeAction.OPENED.value,
+            changed_name=issue.name
+        )
+
+    return redirect('issue_detail', repository_id=repository.id, issue_id=issue.id)
 
 
 @login_required()
@@ -115,7 +141,24 @@ def edit_issue(request, repository_id, issue_id):
 
 @login_required()
 def delete_issue(request, repository_id, issue_id):
-    pass
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, pk=issue_id, repository=repository)
+
+    utils.create_history_item(
+        user=request.user,
+        history_type=HistoryType.ISSUE.value,
+        changed_id=issue.id,
+        changed_action=ChangeAction.DELETED.value,
+        changed_name=issue.name
+    )
+    issue.delete()
+
+    return redirect('repository_issues', repository_id=repository.id)
 
 
 def issue_error(request, message, form, repository):

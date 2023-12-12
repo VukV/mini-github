@@ -57,7 +57,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4>{{ issue.name }}</h4>
             <div>
-                <a href="{% url 'close_issue' repository.id issue.id %}" class="btn btn-secondary btn-sm">Close</a>
+                <a href="{% url 'close_issue' repository.id issue.id %}" class="btn btn-secondary btn-sm">{{ issue.closed|yesno:"Reopen,Close" }}</a>
                 <a href="{% url 'edit_issue' repository.id issue.id %}" class="btn btn-primary btn-sm">Edit</a>
                 <a href="{% url 'delete_issue' repository.id issue.id %}" class="btn btn-danger btn-sm">Delete</a>
             </div>
