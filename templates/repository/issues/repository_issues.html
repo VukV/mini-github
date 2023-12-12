@@ -58,31 +58,49 @@
         </div>
     </div>
 
-
     <!-- Issues -->
     <div class="list-group">
         {% for issue in issues %}
-        <a href="{% url 'issue_detail' repository.id issue.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{ issue.title }}</h5>
-                <small class="text-muted">Created by {{ issue.creator.username }}</small>
+        <div class="list-group-item">
+            <div class="row">
+                <!-- Left Column for Title and Description -->
+                <div class="col-md-4">
+                    <h5>{{ issue.name }}</h5>
+                    <p>{{ issue.description|truncatechars:100 }}</p>
+                    <small>Created by {{ issue.author.username }}</small>
+                </div>
+
+                <!-- Right Columns for Status, Milestone, and Assignees -->
+                <div class="col-md-8">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div>Status:</div>
+                            <strong>{{ issue.get_status_display }}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <div>Milestone:</div>
+                            <strong>{% if issue.milestone %}{{ issue.milestone.name }}{% else %}None{% endif %}</strong>
+                        </div>
+                        <div class="col-md-4">
+                            <div>Assignees:</div>
+                            <strong>
+                              {% with total_assignees=issue.assignees.count %}
+                                {% for assignee in issue.assignees.all %}
+                                  {% if forloop.counter <= 3 %}
+                                    {{ assignee.username }}{% if not forloop.last %}, {% endif %}
+                                  {% endif %}
+                                {% endfor %}
+                                {% if total_assignees > 3 %}
+                                  ... ({{ total_assignees }} total)
+                                {% endif %}
+                              {% endwith %}
+                            </strong>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <p class="mb-1">{{ issue.description|truncatechars:100 }}</p>
-            <small class="text-muted">Status: {{ issue.get_status_display }}</small>
-            <small class="text-muted">Milestone: {% if issue.milestone %}{{ issue.milestone.name }}{% else %}None{% endif %}</small>
-            <small class="text-muted">Assignees:
-              {% with total_assignees=issue.assignees.count %}
-                {% for assignee in issue.assignees %}
-                  {% if forloop.counter <= 3 %}
-                    {{ assignee.username }}{% if not forloop.last %}, {% endif %}
-                  {% endif %}
-                {% endfor %}
-                {% if total_assignees > 3 %}
-                  ... ({{ total_assignees }} total)
-                {% endif %}
-              {% endwith %}
-            </small>
-        </a>
+            <a href="{% url 'issue_detail' repository.id issue.id %}" class="stretched-link"></a>
+        </div>
         {% empty %}
         <div class="list-group-item">No issues found.</div>
         {% endfor %}

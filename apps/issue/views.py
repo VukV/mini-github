@@ -3,6 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.history.models import HistoryType, ChangeAction
 from apps.issue.forms import IssueForm
+from apps.label.models import Label
 from apps.milestone.models import Milestone
 from apps.project.models import Project
 from apps.repository.models import Repository
@@ -47,18 +48,26 @@ def add_issue(request, repository_id):
             issue.repository = repository
             issue.author = request.user
 
-            project_id = form.cleaned_data.get('project')
-            milestone_id = form.cleaned_data.get('milestone')
+            project = form.cleaned_data.get('project')
+            milestone = form.cleaned_data.get('milestone')
+            assignees = form.cleaned_data.get('assignees')
+            labels = form.cleaned_data.get('labels')
 
-            if project_id and not Project.objects.filter(id=project_id, repository=repository).exists():
+            if project and project.repository != repository:
                 error_message = 'Selected project is not linked to this repository.'
                 return create_issue_error(request, error_message, form, repository)
 
-            if milestone_id and not Milestone.objects.filter(id=milestone_id, repository=repository).exists():
+            if milestone and milestone.repository != repository:
                 error_message = 'Selected milestone is not linked to this repository.'
                 return create_issue_error(request, error_message, form, repository)
 
-            # TODO check assignees and labels
+            if assignees and not all(assignee in repository.collaborators.all() for assignee in assignees):
+                error_message = 'One or more selected assignees are not collaborators of this repository.'
+                return create_issue_error(request, error_message, form, repository)
+
+            if labels and not all(label in repository.labels.all() for label in labels):
+                error_message = 'One or more selected labels are not linked to this repository.'
+                return create_issue_error(request, error_message, form, repository)
 
             issue.save()
             form.save_m2m()
