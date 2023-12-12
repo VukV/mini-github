@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Issues</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_issues' repository.id %}">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <!-- Issue Details -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4>{{ issue.name }}</h4>
+            <div>
+                <a href="{% url 'close_issue' repository.id issue.id %}" class="btn btn-secondary btn-sm">{{ issue.closed|yesno:"Reopen,Close" }}</a>
+                <a href="{% url 'edit_issue' repository.id issue.id %}" class="btn btn-primary btn-sm">Edit</a>
+                <a href="{% url 'delete_issue' repository.id issue.id %}" class="btn btn-danger btn-sm">Delete</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <p>{{ issue.description }}</p>
+
+            <!-- Metadata Row -->
+            <div class="row mb-3">
+                <div class="col">
+                    <h6>Created by</h6>
+                    <small class="text-muted">{{ issue.author.username }}</small>
+                </div>
+                <div class="col">
+                    <h6>Created on</h6>
+                    <small class="text-muted">{{ issue.date_created|date:"Y-m-d H:i" }}</small>
+                </div>
+                <div class="col">
+                    <h6>Status</h6>
+                    <small class="text-muted">{{ issue.get_status_display }}</small>
+                </div>
+                <div class="col">
+                    <h6>Milestone</h6>
+                    <small class="text-muted">{% if issue.milestone %}{{ issue.milestone.name }}{% else %}None{% endif %}</small>
+                </div>
+            </div>
+            <br>
+
+            <!-- Labels -->
+            <div class="mb-3">
+                {% for label in issue.labels.all %}
+                    <span class="badge" style="background-color: {{ label.color }};">{{ label.name }}</span>
+                {% empty %}
+                    <span>No labels</span>
+                {% endfor %}
+            </div>
+            <br>
+
+            <!-- Assignees List -->
+            <h6>Assignees</h6>
+            <ul>
+                {% for assignee in issue.assignees.all %}
+                    <li>{{ assignee.username }}</li>
+                {% empty %}
+                    <li>No assignees</li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

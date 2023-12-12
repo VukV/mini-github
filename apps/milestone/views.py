@@ -79,7 +79,7 @@ def edit_milestone(request, repository_id, milestone_id):
             form.save()
             return redirect('repository_milestones', repository_id=repository.id)
         else:
-            error_message = utils.get_error_message(form)
+            error_message = 'Invalid form'
             return render(request, 'repository/milestones/edit_milestone.html', {
                 'error_message': error_message,
                 'form': form,

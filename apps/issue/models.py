@@ -44,7 +44,6 @@ class Issue(models.Model):
         if self.closed:
             if self.milestone and self.milestone.is_complete():
                 self.milestone.set_closed(True)
-            # todo history?
 
     def change_status(self, status):
         self.status = status
@@ -55,6 +54,5 @@ class Issue(models.Model):
 
             if self.milestone and self.milestone.is_complete():
                 self.milestone.set_closed(True)
-            # TODO history?
 
         self.save()

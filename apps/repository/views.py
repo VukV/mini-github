@@ -29,6 +29,8 @@ def create_repository(request):
             repository = form.save(commit=False)
             repository.owner = request.user
             repository.save()
+
+            repository.collaborators.add(request.user)
             form.save_m2m()  # required for saving many-to-many relationships
 
             utils.create_history_item(
@@ -138,6 +140,10 @@ def remove_collaborator(request, repository_id, user_id):
 
     if request.user != repository.owner:
         error_message = 'You do not have permission to change repository name.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if user_id == repository.owner:
+        error_message = 'Can not remove repository owner.'
         return render(request, 'error.html', {'error_message': error_message})
 
     try:

@@ -22,7 +22,7 @@
                     <a class="nav-link active" aria-current="page" href="{% url 'repository' repository.id %}">Code</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Issues</a>
+                    <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Pull Requests</a>
