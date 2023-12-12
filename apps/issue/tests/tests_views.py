@@ -177,4 +177,49 @@ class AddIssueViewTests(TestCase):
         response = self.client.get(reverse('add_issue', args=[self.repository.id]))
         self.assertEqual(response.status_code, 302)
 
-    # TODO: test edit
+
+class EditIssueViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_with_access = User.objects.create_user(username='user_with_access', password='testpass123')
+        cls.user_without_access = User.objects.create_user(username='user_without_access', password='testpass123')
+        cls.repository = Repository.objects.create(name='Test Repo', owner=cls.user_with_access, public=False)
+        cls.issue = Issue.objects.create(
+            name='Original Issue',
+            description='Original Description',
+            repository=cls.repository,
+            author=cls.user_with_access
+        )
+
+    def test_edit_issue_with_access(self):
+        self.client.login(username='user_with_access', password='testpass123')
+        updated_data = {
+            'name': 'Updated Issue',
+            'description': 'Updated Description',
+        }
+        response = self.client.post(reverse('edit_issue', args=[self.repository.id, self.issue.id]), updated_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertRedirects(response, reverse('repository_issues', args=[self.repository.id]))
+        self.issue.refresh_from_db()
+        self.assertEqual(self.issue.name, 'Updated Issue')
+        self.assertEqual(self.issue.description, 'Updated Description')
+
+    def test_edit_issue_without_access(self):
+        self.client.login(username='user_without_access', password='testpass123')
+        response = self.client.post(reverse('edit_issue', args=[self.repository.id, self.issue.id]), {})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('You do not have access to this repository.', response.content.decode())
+
+    def test_edit_issue_invalid_form(self):
+        self.client.login(username='user_with_access', password='testpass123')
+        response = self.client.post(reverse('edit_issue', args=[self.repository.id, self.issue.id]), {
+            'name': '',
+            'description': 'Some description'
+        })
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('Invalid form', response.content.decode())
+
+    def test_edit_issue_unauthenticated_user(self):
+        response = self.client.get(reverse('edit_issue', args=[self.repository.id, self.issue.id]))
+        self.assertEqual(response.status_code, 302)
