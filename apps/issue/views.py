@@ -3,10 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.history.models import HistoryType, ChangeAction
 from apps.issue.forms import IssueForm
-from apps.issue.models import Issue
-from apps.label.models import Label
-from apps.milestone.models import Milestone
-from apps.project.models import Project
+from apps.issue.models import Issue, ISSUE_STATUS
 from apps.repository.models import Repository
 from mini_github import utils
 
@@ -136,7 +133,36 @@ def close_issue(request, repository_id, issue_id):
 
 @login_required()
 def edit_issue(request, repository_id, issue_id):
-    pass
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, id=issue_id, repository=repository)
+    if request.method == 'POST':
+        form = IssueForm(request.POST, instance=issue)
+
+        if form.is_valid():
+            form.save()
+            return redirect('repository_issues', repository_id=repository.id)
+        else:
+            error_message = 'Invalid form'
+            return render(request, 'repository/issues/edit_issue.html', {
+                'error_message': error_message,
+                'form': form,
+                'issue': issue,
+                'repository': repository
+            })
+    else:
+        form = IssueForm(instance=issue)
+
+    return render(request, 'repository/issues/edit_issue.html', {
+        'form': form,
+        'repository': repository,
+        'issue': issue,
+        'ISSUE_STATUS': ISSUE_STATUS
+    })
 
 
 @login_required()
