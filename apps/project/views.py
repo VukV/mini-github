@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.history.models import HistoryType, ChangeAction
+from apps.issue.models import IssueStatus
 from apps.project.forms import ProjectForm
 from apps.project.models import Project
 from apps.repository.models import Repository
@@ -34,8 +35,19 @@ def project_detail(request, repository_id, project_id):
         return render(request, 'error.html', {'error_message': error_message})
 
     project = get_object_or_404(Project, pk=project_id, repository=repository)
+    todo_issues = project.issues.filter(status=IssueStatus.TODO.name)
+    in_progress_issues = project.issues.filter(status=IssueStatus.IN_PROGRESS.name)
+    done_issues = project.issues.filter(status=IssueStatus.DONE.name)
 
-    return render(request, 'repository/projects/project_details.html', {'repository': repository, 'project': project})
+    render_object = {
+        'repository': repository,
+        'project': project,
+        'todo_issues': todo_issues,
+        'in_progress_issues': in_progress_issues,
+        'done_issues': done_issues
+    }
+
+    return render(request, 'repository/projects/project_details.html', render_object)
 
 
 @login_required()
@@ -90,7 +102,7 @@ def edit_project(request, repository_id, project_id):
 
         if form.is_valid():
             form.save()
-            return redirect('repository_projects', repository_id=repository.id)
+            return redirect('project_detail', repository_id=repository.id, project_id=project_id)
         else:
             error_message = 'Invalid form'
             return render(request, 'repository/projects/edit_project.html', {

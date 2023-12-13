@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Project</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <!-- Project Name Field -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Project Name:</label>
+                            <input type="text" name="name" id="id_name" class="form-control" value="{{ project.name }}" required>
+                        </div>
+                        <!-- Description Field -->
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description:</label>
+                            <textarea name="description" id="id_description" class="form-control" rows="3" required>{{ project.description }}</textarea>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Update Project</button>
+                            <a href="{% url 'project_detail' repository.id project.id %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
