@@ -23,7 +23,7 @@ ISSUE_STATUS = [(status.name, status.value) for status in IssueStatus]
 
 class Issue(models.Model):
     name = models.CharField(max_length=50)
-    description = models.TextField()
+    description = models.TextField(blank=True, null=True)
     status = models.CharField(max_length=20, choices=ISSUE_STATUS, default=IssueStatus.TODO.name)
     closed = models.BooleanField(default=False)
     date_created = models.DateTimeField(default=timezone.now)

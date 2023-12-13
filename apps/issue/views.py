@@ -3,7 +3,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.history.models import HistoryType, ChangeAction
 from apps.issue.forms import IssueForm
-from apps.issue.models import Issue, ISSUE_STATUS
+from apps.issue.models import Issue, ISSUE_STATUS, IssueStatus
 from apps.repository.models import Repository
 from mini_github import utils
 
@@ -88,7 +88,7 @@ def add_issue(request, repository_id):
 
             return redirect('repository_issues', repository_id=repository.id)
         else:
-            error_message = utils.get_error_message(form)
+            error_message = 'Invalid form'
             render_object = {
                 'error_message': error_message,
                 'repository': repository
@@ -185,6 +185,48 @@ def delete_issue(request, repository_id, issue_id):
     issue.delete()
 
     return redirect('repository_issues', repository_id=repository.id)
+
+
+@login_required()
+def move_issue_to_todo(request, repository_id, issue_id):
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, pk=issue_id, repository_id=repository_id)
+    issue.change_status(IssueStatus.TODO.name)
+
+    return redirect('project_detail', repository_id=repository_id, project_id=issue.project.id)
+
+
+@login_required()
+def move_issue_to_in_progress(request, repository_id, issue_id):
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, pk=issue_id, repository_id=repository_id)
+    issue.change_status(IssueStatus.IN_PROGRESS.name)
+
+    return redirect('project_detail', repository_id=repository_id, project_id=issue.project.id)
+
+
+@login_required()
+def move_issue_to_done(request, repository_id, issue_id):
+    repository = get_object_or_404(Repository, pk=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    issue = get_object_or_404(Issue, pk=issue_id, repository_id=repository_id)
+    issue.change_status(IssueStatus.DONE.name)
+
+    return redirect('project_detail', repository_id=repository_id, project_id=issue.project.id)
 
 
 def issue_error(request, message, form, repository):

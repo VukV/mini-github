@@ -51,7 +51,7 @@ def add_milestone(request, repository_id):
 
             return redirect('repository_milestones', repository_id=repository.id)
         else:
-            error_message = utils.get_error_message(form)
+            error_message = 'Invalid form.'
             render_object = {
                 'error_message': error_message,
                 'repository': repository

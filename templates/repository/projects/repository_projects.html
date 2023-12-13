@@ -9,7 +9,7 @@
     <!-- Repository Header -->
     <div class="row mb-3">
         <div class="col">
-            <h2>{{ repository.name }} - Labels</h2>
+            <h2>{{ repository.name }} - Issues</h2>
             <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
         </div>
     </div>
@@ -28,13 +28,13 @@
                     <a class="nav-link" href="#">Pull Requests</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
+                    <a class="nav-link active" href="{% url 'repository_projects' repository.id %}">Projects</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link active" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Insights</a>
@@ -52,34 +52,24 @@
         </div>
     </div>
 
-    <!-- Add New Button -->
-    <div class="row mb-3">
-        <div class="col-10">
-            <a href="{% url 'add_label' repository.id %}" class="btn btn-success">Create Label</a>
+    <div class="row mb-4">
+        <div class="col">
+            <a href="{% url 'add_project' repository.id %}" class="btn btn-success">New Project</a>
         </div>
     </div>
 
-    <!-- Labels Card -->
-    <div class="row">
-        <div class="col-10">
-            <div class="card mb-3">
-                <div class="card-body">
-                    <!-- List of Labels -->
-                    {% for label in labels %}
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <span style="color:{{ label.color }};">{{ label.name }}</span>
-                            <!-- Edit and Delete Buttons -->
-                            <div>
-                                <a href="{% url 'edit_label' repository.id label.id %}" class="btn btn-sm btn-secondary">Edit</a>
-                                <a href="{% url 'delete_label' repository.id label.id %}" class="btn btn-sm btn-danger">Delete</a>
-                            </div>
-                        </div>
-                    {% empty %}
-                        <p>No labels yet.</p>
-                    {% endfor %}
-                </div>
+    <!-- Projects -->
+    <div class="list-group">
+        {% for project in projects %}
+        <a href="{% url 'project_detail' repository.id project.id %}" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">{{ project.name }}</h5>
             </div>
-        </div>
+            <p class="mb-1">{{ project.description|truncatechars:100 }}</p>
+        </a>
+        {% empty %}
+        <div class="list-group-item">No projects found.</div>
+        {% endfor %}
     </div>
 
 </div>
