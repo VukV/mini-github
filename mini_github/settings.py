@@ -14,7 +14,7 @@ from pathlib import Path
 import sys
 import os
 
-PROD = True
+PROD = False
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,6 +97,17 @@ if PROD:
             'PORT': 5432,
         }
     }
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://redis:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+
 else:
     DATABASES = {
         'default': {
@@ -109,6 +120,16 @@ else:
         }
     }
 
+    # redis-server for running redis
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://127.0.0.1:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
 CSRF_COOKIE_SECURE = False
