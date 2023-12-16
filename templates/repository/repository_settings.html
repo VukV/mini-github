@@ -144,7 +144,7 @@
     <div class="card mb-3">
         <div class="card-body">
             <h5 class="card-title">Collaborators</h5>
-            {% for collaborator in repository.collaborators.all %}
+            {% for collaborator in collaborators.all %}
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <p class="mb-0">{{ collaborator.username }}</p>
                 <a href="{% url 'remove_collaborator' repository.id collaborator.id %}" class="btn btn-danger btn-sm">Remove</a>

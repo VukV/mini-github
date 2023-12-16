@@ -14,7 +14,6 @@ def home(request):
 
 
 @login_required()
-@cache_page(60 * 2)
 def dashboard(request):
     current_user = request.user
 

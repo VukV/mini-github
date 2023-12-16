@@ -59,7 +59,14 @@ def repository_settings(request, repository_id):
         error_message = 'You do not have access to repository settings.'
         return render(request, 'error.html', {'error_message': error_message})
 
-    return render(request, 'repository/repository_settings.html', {'repository': repository})
+    collaborators = repository.collaborators.exclude(id=repository.owner.id)
+
+    render_object = {
+        'repository': repository,
+        'collaborators': collaborators,
+    }
+
+    return render(request, 'repository/repository_settings.html', render_object)
 
 
 @login_required()
