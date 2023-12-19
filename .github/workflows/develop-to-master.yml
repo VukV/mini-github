@@ -12,6 +12,7 @@ jobs:
       postgres:
         image: postgres:13
         env:
+          DATABASE_HOST: localhost
           POSTGRES_DB: mini-github
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: vuk123
