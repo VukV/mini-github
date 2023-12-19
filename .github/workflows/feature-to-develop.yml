@@ -40,3 +40,8 @@ jobs:
     - name: Run tests
       run: |
         python manage.py test
+      env:
+        DATABASE_HOST: localhost
+        DATABASE_NAME: mini-github
+        DATABASE_USER: postgres
+        DATABASE_PASSWORD: vuk123
