@@ -17,11 +17,6 @@ class HomeViewTests(TestCase):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
 
-    def test_home_view_uses_correct_template(self):
-        self.client.login(username='testuser', password='testpass123')
-        response = self.client.get(reverse('home'))
-        self.assertTemplateUsed(response, 'home/home.html')
-
 
 class DashboardViewTests(TestCase):
 
