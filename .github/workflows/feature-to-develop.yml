@@ -12,7 +12,6 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          DATABASE_HOST: localhost
           POSTGRES_DB: mini-github
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: vuk123
@@ -41,7 +40,7 @@ jobs:
       run: |
         python manage.py test
       env:
-        DATABASE_HOST: localhost
+        DATABASE_HOST: postgres
         DATABASE_NAME: mini-github
         DATABASE_USER: postgres
         DATABASE_PASSWORD: vuk123
