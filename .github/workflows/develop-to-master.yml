@@ -36,18 +36,10 @@ jobs:
         pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Apply migrations
-      run: |
-        python manage.py migrate
-      env:
-        DJANGO_TESTING: 'True'
-        DATABASE_HOST: localhost
-        DATABASE_NAME: mini-github
-        DATABASE_USER: postgres
-        DATABASE_PASSWORD: vuk123
-
     - name: Run tests
       run: |
+        python manage.py makemigrations
+        python manage.py migrate
         python manage.py test
       env:
         DJANGO_TESTING: 'True'
