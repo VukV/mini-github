@@ -15,6 +15,7 @@ import sys
 import os
 
 PROD = True
+DJANGO_TESTING = os.environ.get('DJANGO_TESTING') == 'True'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -86,7 +87,19 @@ WSGI_APPLICATION = 'mini_github.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-if PROD:
+if DJANGO_TESTING:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DATABASE_NAME', 'mini-github'),
+            'USER': os.environ.get('DATABASE_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'vuk123'),
+            'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+            'PORT': '5432',
+        }
+    }
+
+elif PROD:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',

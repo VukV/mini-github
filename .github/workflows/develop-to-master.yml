@@ -40,7 +40,8 @@ jobs:
       run: |
         python manage.py test
       env:
-        DATABASE_HOST: postgres
+        DJANGO_TESTING: 'True'
+        DATABASE_HOST: localhost
         DATABASE_NAME: mini-github
         DATABASE_USER: postgres
         DATABASE_PASSWORD: vuk123
