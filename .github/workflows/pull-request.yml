@@ -1,8 +1,8 @@
-name: Feature to Develop CI
+name: Pull Request CI
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ develop, master ]
 
 jobs:
   build-and-test:
