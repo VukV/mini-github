@@ -73,10 +73,10 @@ class AddMilestoneViewTests(TestCase):
         response = self.client.post(reverse('add_milestone', args=[self.repository.id]), {
             'name': '',
             'description': 'Description without a name',
-            'date_due': 'invalid-date-format'
+            'date_due': date.today().isoformat()
         })
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'This field is required.', status_code=200)
+        self.assertFormError(response, 'form', 'name', 'This field is required.')
 
     def test_add_milestone_unauthenticated_user(self):
         response = self.client.get(reverse('add_milestone', args=[self.repository.id]))
@@ -124,7 +124,7 @@ class EditMilestoneViewTests(TestCase):
             'date_due': date.today().isoformat()
         })
         self.assertEqual(response.status_code, 200)
-        self.assertIn('This field is required.', response.content.decode())
+        self.assertFormError(response, 'form', 'name', 'This field is required.')
 
     def test_edit_milestone_unauthenticated_user(self):
         response = self.client.get(reverse('edit_milestone', args=[self.repository.id, self.milestone.id]))

@@ -54,6 +54,7 @@ def add_milestone(request, repository_id):
             error_message = 'Invalid form.'
             render_object = {
                 'error_message': error_message,
+                'form': form,
                 'repository': repository
             }
             return render(request, 'repository/milestones/add_milestone.html', render_object)
