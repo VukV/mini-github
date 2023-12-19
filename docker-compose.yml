@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: mini-github
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: vuk123
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /app/sh_scripts/database_wait.sh
+    volumes:
+      - .:/app
+    ports:
+      - "8001:8000" # Changed to 8001 to avoid conflict with Nginx
+    depends_on:
+      - db
+    environment:
+      DATABASE_HOST: db
+      DATABASE_NAME: mini-github
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: vuk123
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80" # Nginx listens on port 80, mapped to 8000 on the host
+    volumes:
+      - static_volume:/app/static
+    depends_on:
+      - web
+
+volumes:
+  postgres_data:
+  static_volume:
+

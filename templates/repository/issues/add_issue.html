@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create a new issue</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <!-- Issue Name Field -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Issue Name:</label>
+                            <input type="text" name="name" id="id_name" class="form-control" required>
+                        </div>
+                        <!-- Description Field -->
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description:</label>
+                            <textarea name="description" id="id_description" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <!-- Project Field (Optional) -->
+                        <div class="mb-3">
+                            <label for="id_project" class="form-label">Project:</label>
+                            <select name="project" id="id_project" class="form-control">
+                                <option value="">---</option>
+                                {% for project in repository.projects.all %}
+                                    <option value="{{ project.id }}">{{ project.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Milestone Field (Optional) -->
+                        <div class="mb-3">
+                            <label for="id_milestone" class="form-label">Milestone:</label>
+                            <select name="milestone" id="id_milestone" class="form-control">
+                                <option value="">---</option>
+                                {% for milestone in repository.milestones.all %}
+                                    <option value="{{ milestone.id }}">{{ milestone.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Assignees Field (Optional, Multiple Select) -->
+                        <div class="mb-3">
+                            <label for="id_assignees" class="form-label">Assignees:</label>
+                            <select name="assignees" id="id_assignees" class="form-control" multiple>
+                                {% for collaborator in repository.collaborators.all %}
+                                    <option value="{{ collaborator.id }}">{{ collaborator.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Labels Field (Optional, Multiple Select) -->
+                        <div class="mb-3">
+                            <label for="id_labels" class="form-label">Labels:</label>
+                            <select name="labels" id="id_labels" class="form-control" multiple>
+                                {% for label in repository.labels.all %}
+                                    <option value="{{ label.id }}">{{ label.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Create Issue</button>
+                            <a href="{% url 'repository_issues' repository.id %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

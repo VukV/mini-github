@@ -1,15 +1,9 @@
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
 from .forms import LoginForm, RegisterForm
-from django.contrib import messages
 from mini_github import utils
-
-
-def test(request):
-    return HttpResponse("TEST")
 
 
 def login(request):

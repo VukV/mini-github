@@ -14,6 +14,9 @@ from pathlib import Path
 import sys
 import os
 
+PROD = True
+DJANGO_TESTING = os.environ.get('DJANGO_TESTING') == 'True'
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 # sys.path.append(os.path.join(BASE_DIR, 'apps'))  # find all apps in /apps
@@ -84,16 +87,66 @@ WSGI_APPLICATION = 'mini_github.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',  # postgresql_psycopg2
-        'NAME': 'mini-github',
-        'USER': 'postgres',
-        'PASSWORD': 'vuk123',
-        'HOST': 'localhost',
-        'PORT': 5432,
+if DJANGO_TESTING:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('DATABASE_NAME', 'mini-github'),
+            'USER': os.environ.get('DATABASE_USER', 'postgres'),
+            'PASSWORD': os.environ.get('DATABASE_PASSWORD', 'vuk123'),
+            'HOST': os.environ.get('DATABASE_HOST', 'localhost'),
+            'PORT': '5432',
+        }
     }
-}
+
+elif PROD:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'mini-github',
+            'USER': 'postgres',
+            'PASSWORD': 'vuk123',
+            'HOST': 'db',  # service name defined in docker-compose.yml
+            'PORT': 5432,
+        }
+    }
+
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://redis:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',  # postgresql_psycopg2
+            'NAME': 'mini-github',
+            'USER': 'postgres',
+            'PASSWORD': 'vuk123',
+            'HOST': 'localhost',
+            'PORT': 5432,
+        }
+    }
+
+    # redis-server for running redis
+    CACHES = {
+        'default': {
+            'BACKEND': 'django_redis.cache.RedisCache',
+            'LOCATION': 'redis://127.0.0.1:6379/1',
+            'OPTIONS': {
+                'CLIENT_CLASS': 'django_redis.client.DefaultClient',
+            }
+        }
+    }
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_COOKIE_SECURE = False
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -113,7 +166,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-LOGIN_URL = 'authentication/login'
+LOGIN_URL = '/authentication/login'
 
 
 # Internationalization
@@ -131,6 +184,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

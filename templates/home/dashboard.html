@@ -22,22 +22,26 @@
             {% endfor %}
         </div>
 
-        <!-- Recent Activity (Right Column) -->
-        <div class="col-md-4 offset-md-1">
-            <h3>Recent Activity</h3>
-            <br>
-            {% for activity in recent_activity %}
-                <div>
-                    <h5>{{ activity }}</h5>
-                    <p>
-                        <small class="text-muted">{{ activity.date_time_changed }}</small>
-                    </p>
-                    <hr>
-                </div>
-            {% empty %}
-               <div>No recent activity.</div>
-            {% endfor %}
-        </div>
+        {% load cache %}
+        {% cache 240 recent_activity %}
+            <!-- Recent Activity (Right Column) -->
+            <div class="col-md-4 offset-md-1">
+                <h3>Recent Activity</h3>
+                <br>
+                {% for activity in recent_activity %}
+                    <div>
+                        <h5>{{ activity }}</h5>
+                        <p>
+                            <small class="text-muted">{{ activity.date_time_changed }}</small>
+                        </p>
+                        <hr>
+                    </div>
+                {% empty %}
+                   <div>No recent activity.</div>
+                {% endfor %}
+            </div>
+        {% endcache %}
+
     </div>
 </div>
 {% endblock %}

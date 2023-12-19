@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Edit Milestone</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <!-- Milestone Name Field -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Milestone Name:</label>
+                            <input type="text" name="name" id="id_name" class="form-control" value="{{ form.instance.name }}" required>
+                        </div>
+                        <!-- Description Field -->
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description:</label>
+                            <textarea name="description" id="id_description" class="form-control" rows="3" required>{{ form.instance.description }}</textarea>
+                        </div>
+                        <!-- Date Due Field -->
+                        <div class="mb-3">
+                            <label for="id_date_due" class="form-label">Due Date:</label>
+                            <input type="date" name="date_due" id="id_date_due" class="form-control" value="{{ form.instance.date_due|date:'Y-m-d' }}" required>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Update Milestone</button>
+                            <a href="{% url 'repository_milestones' repository.id %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

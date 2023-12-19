@@ -22,16 +22,16 @@
                     <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Issues</a>
+                    <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Pull Requests</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Projects</a>
+                    <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Milestones</a>
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'repository_labels' repository.id %}">Labels</a>
@@ -46,20 +46,15 @@
         </div>
     </div>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-danger">
-                {{ message }}
-            </div>
-        {% endfor %}
-    {% endif %}
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
 
     <!-- Add New Button -->
     <div class="row mb-3">
-        <div class="col-10 d-flex justify-content-between">
-            <!-- Labels Card Title -->
-            <h5 class="card-title">Labels</h5>
-            <!-- Add New Label Button -->
+        <div class="col-10">
             <a href="{% url 'add_label' repository.id %}" class="btn btn-success">Create Label</a>
         </div>
     </div>
