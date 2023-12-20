@@ -14,7 +14,7 @@ from pathlib import Path
 import sys
 import os
 
-PROD = True
+PROD = False
 DJANGO_TESTING = os.environ.get('DJANGO_TESTING') == 'True'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.

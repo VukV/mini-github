@@ -12,10 +12,15 @@ def branches_from_repository(request, repository_id):
         error_message = 'You do not have access to this repository.'
         return render(request, 'error.html', {'error_message': error_message})
 
-    branches = repository.branches.all()
+    branches = repository.branches.order_by('-default')
     render_object = {
         'repository': repository,
         'branches': branches
     }
 
     return render(request, 'repository/branches/repository_branches.html', render_object)
+
+
+@login_required()
+def add_branch(request, repository_id):
+    print("")

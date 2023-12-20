@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body">
                     <!-- TODO set initial commits for main -->
-                    <a href="#" id="commitsLink">0 commits</a>
+                    <a href="#" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
                 </div>
             </div>
 
@@ -108,7 +108,7 @@
         document.getElementById('branchDropdown').textContent = branchName;
 
         let commitsLink = document.getElementById('commitsLink');
-        commitsLink.textContent = commitCount + ' commits';
+        commitsLink.textContent = commitCount + ' commits on this branch';
 
         //TODO set href!
         commitsLink.setAttribute('href', '#');
