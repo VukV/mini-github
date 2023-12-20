@@ -49,9 +49,33 @@
     <!-- Repository Content and Sidebar -->
     <div class="row">
         <div class="col-md-9">
-            <!-- Placeholder -->
-            <div class="border p-3">
-                <p>Placeholder for repository content.</p>
+            <!-- Branch Selector and Branches Link -->
+            <div class="mb-3 d-flex align-items-center">
+                <div class="dropdown me-2">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="branchDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ repository.get_default_branch.name|default:"Select branch" }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="branchDropdown">
+                        {% for branch in repository.branches.all %}
+                        <li><a class="dropdown-item" href="#" onclick="updateCommits('{{ branch.name }}', '{{ branch.commits.count }}')">{{ branch.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <a href="{% url 'repository_branches' repository.id %}">
+                    {{ repository.branches.count }} branches
+                </a>
+            </div>
+
+            <!-- Placeholder for repository content -->
+            <div class="card">
+                <div class="card-header">
+                    Commits
+                </div>
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <!-- TODO set initial HREF -->
+                    <a href="#" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
+                    <a href="#" class="btn btn-success btn-sm">New Commit</a>
+                </div>
             </div>
         </div>
 
@@ -78,4 +102,16 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateCommits(branchName, commitCount) {
+        document.getElementById('branchDropdown').textContent = branchName;
+
+        let commitsLink = document.getElementById('commitsLink');
+        commitsLink.textContent = commitCount + ' commits on this branch';
+
+        //TODO set href!
+        commitsLink.setAttribute('href', '#');
+    }
+</script>
 {% endblock content %}

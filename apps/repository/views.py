@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.shortcuts import render, get_object_or_404, redirect
 
+from apps.branch.models import Branch
 from apps.history.models import ChangeAction, HistoryType
 from apps.repository.forms import RepositoryForm
 from apps.repository.models import Repository
@@ -31,7 +32,10 @@ def create_repository(request):
             repository.save()
 
             repository.collaborators.add(request.user)
-            form.save_m2m()  # required for saving many-to-many relationships
+            form.save_m2m()
+
+            main_branch = Branch(name='main', default=True, repository=repository)
+            main_branch.save()
 
             utils.create_history_item(
                 user=request.user,
