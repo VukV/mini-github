@@ -92,6 +92,7 @@ def edit_branch(request, repository_id, branch_id):
     return render(request, 'repository/branches/edit_branch.html', {'form': form, 'repository': repository})
 
 
+@login_required()
 def delete_branch(request, repository_id, branch_id):
     repository = get_object_or_404(Repository, pk=repository_id)
 
