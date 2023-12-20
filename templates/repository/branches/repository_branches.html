@@ -63,9 +63,9 @@
                 {% if branch.default %}<span class="badge bg-secondary">default</span>{% endif %}
             </div>
             <div>
-                <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                <a href="{% url 'edit_branch' repository.id branch.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
                 {% if not branch.default %}
-                    <a href="#" class="btn btn-sm btn-outline-danger">Delete</a>
+                    <a href="{% url 'delete_branch' repository.id branch.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
                 {% endif %}
             </div>
         </div>

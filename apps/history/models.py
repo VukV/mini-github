@@ -10,6 +10,7 @@ class HistoryType(Enum):
     MILESTONE = 'milestone'
     ISSUE = 'issue'
     LABEL = 'label'
+    BRANCH = 'branch'
     # TODO check for more types
 
 
