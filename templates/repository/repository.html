@@ -57,7 +57,7 @@
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="branchDropdown">
                         {% for branch in repository.branches.all %}
-                        <li><a class="dropdown-item" href="#" onclick="updateCommits('{{ branch.name }}', '{{ branch.commits.count }}')">{{ branch.name }}</a></li>
+                        <li><a class="dropdown-item" href="#" onclick="updateCommits('{{ branch.name }}', '{{ branch.id }}', '{{ branch.commits.count }}')">{{ branch.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -72,9 +72,8 @@
                     Commits
                 </div>
                 <div class="card-body d-flex justify-content-between align-items-center">
-                    <!-- TODO set initial HREF -->
-                    <a href="#" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
-                    <a href="#" class="btn btn-success btn-sm">New Commit</a>
+                    <a href="{% url 'branch_commits' repository.get_default_branch.id %}" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
+                    <a href="{% url 'add_commit' repository.get_default_branch.id %}" class="btn btn-success btn-sm">New Commit</a>
                 </div>
             </div>
         </div>
@@ -104,14 +103,14 @@
 </div>
 
 <script>
-    function updateCommits(branchName, commitCount) {
+    function updateCommits(branchName, branchId, commitCount) {
         document.getElementById('branchDropdown').textContent = branchName;
 
         let commitsLink = document.getElementById('commitsLink');
         commitsLink.textContent = commitCount + ' commits on this branch';
 
-        //TODO set href!
-        commitsLink.setAttribute('href', '#');
+        let urlTemplate = "{% url 'branch_commits' '0' %}";
+        commitsLink.href = urlTemplate.replace('0', branchId);
     }
 </script>
 {% endblock content %}

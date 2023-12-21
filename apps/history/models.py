@@ -11,6 +11,8 @@ class HistoryType(Enum):
     ISSUE = 'issue'
     LABEL = 'label'
     BRANCH = 'branch'
+    COMMIT = 'commit'
+    PULL_REQUEST = 'pull request'
     # TODO check for more types
 
 
