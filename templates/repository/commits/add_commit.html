@@ -1,10 +1,40 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Create a new commit</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <!-- Commit Message Field -->
+                        <div class="mb-3">
+                            <label for="id_message" class="form-label">Commit Message:</label>
+                            <textarea name="message" id="id_message" class="form-control" rows="3" required></textarea>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Create Commit</button>
+                            <a href="{% url 'branch_commits' branch.id %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
