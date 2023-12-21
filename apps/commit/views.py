@@ -13,8 +13,8 @@ from mini_github import utils
 @login_required()
 def commits_from_branch(request, branch_id):
     branch = get_object_or_404(Branch, pk=branch_id)
-
     repository = branch.repository
+
     if not repository.check_access(request.user):
         error_message = 'You do not have access to this repository.'
         return render(request, 'error.html', {'error_message': error_message})

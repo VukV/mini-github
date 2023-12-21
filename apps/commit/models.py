@@ -9,7 +9,7 @@ from datetime import datetime
 
 class Commit(models.Model):
     hash = models.CharField()
-    message = models.TextField(blank=True)
+    message = models.TextField(blank=False)
     date_time_created = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='commits')
     repository = models.ForeignKey(Repository, on_delete=models.CASCADE, null=True, related_name='commits')
