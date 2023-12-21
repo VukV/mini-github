@@ -9,7 +9,7 @@
     <!-- Repository Header -->
     <div class="row mb-3">
         <div class="col">
-            <h2>{{ repository.name }} - Branches </h2>
+            <h2>{{ repository.name }} - Commits </h2>
             <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
         </div>
     </div>
@@ -46,32 +46,35 @@
         </div>
     </div>
 
-    <!-- New Branch Button -->
+    <!-- Branch Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h3> {{ branch.name }} </h3>
+        </div>
+    </div>
+
+    <!-- New Commit Button -->
     <div class="row mb-2">
         <div class="col">
-            <a href="{% url 'add_branch' repository.id %}" class="btn btn-success">New Branch</a>
+            <a href="{% url 'add_commit' branch.id %}" class="btn btn-success">New Commit</a>
         </div>
     </div>
     <br>
 
-    <!-- Branches List -->
+    <!-- Commits List -->
     <div class="list-group">
-        {% for branch in branches %}
-        <div class="list-group-item d-flex justify-content-between align-items-center">
+        {% for commit in commits %}
+        <div class="d-flex justify-content-between align-items-center">
             <div>
-                <h5 class="mb-1 d-inline-block">{{ branch.name }}</h5>
-                {% if branch.default %}<span class="badge bg-secondary ml-2">default</span>{% endif %}
-            </div>
-            <div>
-                <a href="{% url 'edit_branch' repository.id branch.id %}" class="btn btn-sm btn-outline-secondary">Edit</a>
-                {% if not branch.default %}
-                    <a href="{% url 'delete_branch' repository.id branch.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                {% endif %}
+                <!-- Commit Details -->
+                <h5 class="mb-1 d-inline-block">{{ commit.message }}</h5>
+                <small class="text-muted">&emsp; by {{ commit.author.username }} on {{ commit.date_time_created|date:"Y-m-d H:i" }}</small>
             </div>
         </div>
+        <br>
         {% empty %}
         <div class="list-group-item">
-            <p>No branches found.</p>
+            <p>No commits found in this branch.</p>
         </div>
         {% endfor %}
     </div>

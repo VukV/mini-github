@@ -2,6 +2,8 @@ from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+
+from apps.branch.models import Branch
 from apps.repository.models import Repository
 
 
@@ -12,7 +14,9 @@ class RepositoryDetailViewTests(TestCase):
         cls.owner = User.objects.create_user(username='owner', password='testpass123')
         cls.other_user = User.objects.create_user(username='other_user', password='testpass123')
         cls.public_repository = Repository.objects.create(name='Public Repo', public=True, owner=cls.owner)
+        cls.branch_public = Branch.objects.create(name='main public', default=True, repository=cls.public_repository)
         cls.private_repository = Repository.objects.create(name='Private Repo', public=False, owner=cls.owner)
+        cls.branch_private = Branch.objects.create(name='main private', default=True, repository=cls.private_repository)
 
     def test_repository_detail_view_with_owner(self):
         self.client.login(username='owner', password='testpass123')
