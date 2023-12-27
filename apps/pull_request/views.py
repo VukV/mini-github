@@ -87,13 +87,7 @@ def add_pull_request(request, repository_id):
 
             return redirect('repository_pull_requests', repository_id=repository.id)
         else:
-            print(form.errors)
-            form.fields['source'].queryset = Branch.objects.filter(repository=repository)
-            form.fields['target'].queryset = Branch.objects.filter(repository=repository)
-            form.fields['reviewers'].queryset = User.objects.filter(
-                Q(repositories_collab=repository) | Q(id=repository.owner.id)
-            ).exclude(id=request.user.id)
-
+            set_pull_request_form_fields(form, repository, request.user)
             error_message = 'Invalid form.'
             render_object = {
                 'error_message': error_message,
@@ -103,10 +97,14 @@ def add_pull_request(request, repository_id):
             return render(request, 'repository/pull_requests/add_pull_request.html', render_object)
     else:
         form = PullRequestForm()
-        form.fields['source'].queryset = Branch.objects.filter(repository=repository)
-        form.fields['target'].queryset = Branch.objects.filter(repository=repository)
-        form.fields['reviewers'].queryset = User.objects.filter(
-            Q(repositories_collab=repository) | Q(id=repository.owner.id)
-        ).exclude(id=request.user.id)
+        set_pull_request_form_fields(form, repository, request.user)
 
     return render(request, 'repository/pull_requests/add_pull_request.html', {'form': form, 'repository': repository})
+
+
+def set_pull_request_form_fields(form, repository, user):
+    form.fields['source'].queryset = Branch.objects.filter(repository=repository)
+    form.fields['target'].queryset = Branch.objects.filter(repository=repository)
+    form.fields['reviewers'].queryset = User.objects.filter(
+        Q(repositories_collab=repository) | Q(id=repository.owner.id)
+    ).exclude(id=user.id)
