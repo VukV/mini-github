@@ -55,6 +55,15 @@
                                 {% endfor %}
                             </select>
                         </div>
+                        <!-- Labels -->
+                        <div class="mb-3">
+                            <label for="id_labels" class="form-label">Labels:</label>
+                            <select name="labels" id="id_labels" class="form-control" multiple>
+                                {% for label in repository.labels.all %}
+                                    <option value="{{ label.id }}">{{ label.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                         <!-- Submit Button -->
                         <div class="d-flex justify-content-center gap-2">
                             <button type="submit" class="btn btn-primary">Open Pull Request</button>

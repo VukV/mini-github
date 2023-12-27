@@ -1,12 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-    <div>
-        TO DO
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Pull Requests</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
     </div>
-</body>
-</html>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <!-- Pull Request Details -->
+    <div class="row">
+        <div class="col-md-12">
+            <h3>{{ pull_request.name }}</h3>
+            <p>Created on: {{ pull_request.date_created }}</p>
+            <p>Status: {{ pull_request.get_status_display }}</p>
+            <p>Branches: {{ pull_request.source.name }} -> {{ pull_request.target.name }}</p>
+            <p>Author: {{ pull_request.author.username }}</p>
+
+            <!-- Labels -->
+            <div class="mb-3">
+                {% for label in pull_request.labels.all %}
+                    <span class="badge" style="background-color: {{ label.color }};">{{ label.name }}</span>
+                {% empty %}
+                    <span>No labels</span>
+                {% endfor %}
+            </div>
+
+            <div class="mb-3">
+                {% if pull_request.status == 'open' %}
+                    <form action="#" method="post" style="display: inline-block; margin-right: 10px;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success">Merge</button>
+                    </form>
+                    <form action="#" method="post" style="display: inline-block; margin-right: 10px;">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Close</button>
+                    </form>
+                    {% if request.user in pull_request.reviewers.all %}
+                        <form action="#" method="post" style="display: inline-block;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">Approve</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}

@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.branch.models import Branch
 from apps.history.models import HistoryType, ChangeAction
+from apps.label.models import Label
 from apps.pull_request.forms import PullRequestForm
 from apps.pull_request.models import PullRequestStatus, PullRequest
 from apps.repository.models import Repository
@@ -31,15 +32,6 @@ def pull_requests_from_repository(request, repository_id):
     }
 
     return render(request, 'repository/pull_requests/repository_pull_requests.html', render_object)
-
-
-@login_required()
-def add_pull_request(request, repository_id):
-    repository = get_object_or_404(Repository, id=repository_id)
-
-    if not repository.check_access(request.user):
-        error_message = 'You do not have access to this repository.'
-        return render(request, 'error.html', {'error_message': error_message})
 
 
 @login_required()
@@ -108,3 +100,4 @@ def set_pull_request_form_fields(form, repository, user):
     form.fields['reviewers'].queryset = User.objects.filter(
         Q(repositories_collab=repository) | Q(id=repository.owner.id)
     ).exclude(id=user.id)
+    form.fields['labels'].queryset = Label.objects.filter(repository=repository)
