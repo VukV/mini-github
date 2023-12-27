@@ -13,7 +13,6 @@ class HistoryType(Enum):
     BRANCH = 'branch'
     COMMIT = 'commit'
     PULL_REQUEST = 'pull request'
-    # TODO check for more types
 
 
 HISTORY_TYPE = [(history_type.name, history_type.value) for history_type in HistoryType]

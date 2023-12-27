@@ -14,6 +14,10 @@ from pathlib import Path
 import sys
 import os
 
+# sudo docker-compose build
+# sudo docker-compose up
+# sudo docker-compose down
+
 PROD = False
 DJANGO_TESTING = os.environ.get('DJANGO_TESTING') == 'True'
 
