@@ -31,7 +31,13 @@ class PullRequest {
     id: Long
     name: String
     dateCreated: Date
+    status: PullRequestStatus
+}
 
+enum PullRequestStatus {
+    OPEN
+    MERGED
+    CLOSED
 }
 
 class Branch {
@@ -76,14 +82,27 @@ class History {
     id: Long
     dateTimeChanged: DateTime
     type: HistoryType
+    action: HistoryAction
     changedId: Long
+    changedName: String
 }
 
 enum HistoryType {
+    REPOSITORY
     PROJECT
     MILESTONE
     ISSUE
     LABEL
+    BRANCH
+    COMMIT
+    PULL_REQUEST
+}
+
+enum HistoryAction {
+    CREATED
+    DELETED
+    OPENED
+    CLOSED
 }
 
 
@@ -109,6 +128,7 @@ PullRequest "0..*" -- "0..*" User : reviewers
 PullRequest "0..*" -- "0..*" Label
 PullRequest "0..*" -- "1" Branch : source
 PullRequest "0..*" -- "1" Branch : target
+PullRequest "0..*" -- "1" Repository
 
 History "0..*" -- "1" User
 
