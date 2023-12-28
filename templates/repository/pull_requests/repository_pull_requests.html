@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Pull Requests</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <!-- Pull Requests -->
+    <div class="row mb-2">
+        <div class="col">
+            <a href="{% url 'add_pull_request' repository.id %}" class="btn btn-success">New Pull Request</a>
+        </div>
+    </div>
+    <br>
+
+    <!-- Pull Requests Tabs -->
+    <ul class="nav nav-tabs">
+        <li class="nav-item">
+            <a class="nav-link active" data-bs-toggle="tab" href="#open">Open</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#merged">Merged</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="tab" href="#closed">Closed</a>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <div class="tab-pane show active" id="open">
+            <br>
+            <!-- List of Open Pull Requests -->
+            {% for pr in pr_open %}
+                <a href="{% url 'pull_request_detail' repository.id pr.id %}" class="pull-request-item-link">
+                    <div class="pull-request-item mb-3">
+                        <h5>{{ pr.name }} ({{ pr.source.name }} -> {{ pr.target.name }})</h5>
+                        <p>Author: {{ pr.author.username }} | Date Created: {{ pr.date_created|date:"Y-m-d" }}</p>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No open pull requests.</p>
+            {% endfor %}
+        </div>
+        <div class="tab-pane" id="merged">
+            <br>
+            <!-- List of Merged Pull Requests -->
+            {% for pr in pr_merged %}
+                <a href="{% url 'pull_request_detail' repository.id pr.id %}" class="pull-request-item-link">
+                    <div class="pull-request-item mb-3">
+                        <h5>{{ pr.name }} ({{ pr.source.name }} -> {{ pr.target.name }})</h5>
+                        <p>Author: {{ pr.author.username }} | Date Created: {{ pr.date_created|date:"Y-m-d" }}</p>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No merged pull requests.</p>
+            {% endfor %}
+        </div>
+        <div class="tab-pane" id="closed">
+            <br>
+            <!-- List of Closed Pull Requests -->
+            {% for pr in pr_closed %}
+                <a href="{% url 'pull_request_detail' repository.id pr.id %}" class="pull-request-item-link">
+                    <div class="pull-request-item mb-3">
+                        <h5>{{ pr.name }} ({{ pr.source.name }} -> {{ pr.target.name }})</h5>
+                        <p>Author: {{ pr.author.username }} | Date Created: {{ pr.date_created|date:"Y-m-d" }}</p>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No closed pull requests.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+</div>
+{% endblock content %}

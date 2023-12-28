@@ -25,7 +25,7 @@
                     <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Pull Requests</a>
+                    <a class="nav-link" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'repository_projects' repository.id %}">Projects</a>

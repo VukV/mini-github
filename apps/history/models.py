@@ -13,7 +13,6 @@ class HistoryType(Enum):
     BRANCH = 'branch'
     COMMIT = 'commit'
     PULL_REQUEST = 'pull request'
-    # TODO check for more types
 
 
 HISTORY_TYPE = [(history_type.name, history_type.value) for history_type in HistoryType]
@@ -24,6 +23,7 @@ class ChangeAction(Enum):
     DELETED = 'deleted'
     OPENED = 'opened'
     CLOSED = 'closed'
+    MERGED = 'merged'
 
 
 CHANGE_ACTION = [(change_action.name, change_action.value) for change_action in ChangeAction]
