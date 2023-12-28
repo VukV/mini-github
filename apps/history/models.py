@@ -23,6 +23,7 @@ class ChangeAction(Enum):
     DELETED = 'deleted'
     OPENED = 'opened'
     CLOSED = 'closed'
+    MERGED = 'merged'
 
 
 CHANGE_ACTION = [(change_action.name, change_action.value) for change_action in ChangeAction]

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block header %}
 {% include "navbar.html" %}
@@ -57,9 +58,20 @@
         <div class="col-md-12">
             <h3>{{ pull_request.name }}</h3>
             <p>Created on: {{ pull_request.date_created }}</p>
-            <p>Status: {{ pull_request.get_status_display }}</p>
+            <p>Status:
+                <span class="{% if pull_request.status == 'merged' %}text-success{% elif pull_request.status == 'closed' %}text-danger{% endif %}">
+                    {{ pull_request.get_status_display }}
+                </span>
+            </p>
             <p>Branches: {{ pull_request.source.name }} -> {{ pull_request.target.name }}</p>
             <p>Author: {{ pull_request.author.username }}</p>
+
+            {% if pull_request.reviewed %}
+                <p>
+                    Approved
+                    <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Approved" style="width: 20px; height: 20px;">
+                </p>
+            {% endif %}
 
             <!-- Labels -->
             <div class="mb-3">
@@ -72,16 +84,16 @@
 
             <div class="mb-3">
                 {% if pull_request.status == 'open' %}
-                    <form action="#" method="post" style="display: inline-block; margin-right: 10px;">
+                    <form action="{% url 'merge_pull_request' repository.id pull_request.id %}" method="post" style="display: inline-block; margin-right: 10px;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-success">Merge</button>
                     </form>
-                    <form action="#" method="post" style="display: inline-block; margin-right: 10px;">
+                    <form action="{% url 'close_pull_request' repository.id pull_request.id %}" method="post" style="display: inline-block; margin-right: 10px;">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger">Close</button>
                     </form>
                     {% if request.user in pull_request.reviewers.all %}
-                        <form action="#" method="post" style="display: inline-block;">
+                        <form action="{% url 'approve_pull_request' repository.id pull_request.id %}" method="post" style="display: inline-block;">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary">Approve</button>
                         </form>

@@ -1,7 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 
 from apps.branch.models import Branch
 from apps.history.models import HistoryType, ChangeAction
@@ -92,6 +95,93 @@ def add_pull_request(request, repository_id):
         set_pull_request_form_fields(form, repository, request.user)
 
     return render(request, 'repository/pull_requests/add_pull_request.html', {'form': form, 'repository': repository})
+
+
+@login_required()
+def merge_pull_request(request, repository_id, pr_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    pull_request = get_object_or_404(PullRequest, id=pr_id, repository=repository)
+
+    if pull_request.status != PullRequestStatus.OPEN.value:
+        error_message = 'Only open pull requests can be merged.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    with transaction.atomic():
+        if pull_request.source != pull_request.target:
+            source_commits = pull_request.source.commits.all()
+
+            for commit in source_commits:
+                pull_request.target.commits.add(commit)
+
+        pull_request.status = PullRequestStatus.MERGED.value
+        pull_request.save()
+
+        utils.create_history_item(
+            user=request.user,
+            history_type=HistoryType.REPOSITORY.value,
+            changed_id=pull_request.id,
+            changed_action=ChangeAction.MERGED.value,
+            changed_name=pull_request.name
+        )
+
+    return HttpResponseRedirect(reverse('pull_request_detail', args=[repository_id, pr_id]))
+
+
+@login_required()
+def close_pull_request(request, repository_id, pr_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    pull_request = get_object_or_404(PullRequest, id=pr_id, repository=repository)
+
+    if pull_request.status != PullRequestStatus.OPEN.value:
+        error_message = 'Only open pull requests can be closed.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    pull_request.status = PullRequestStatus.CLOSED.value
+    pull_request.save()
+
+    utils.create_history_item(
+        user=request.user,
+        history_type=HistoryType.REPOSITORY.value,
+        changed_id=pull_request.id,
+        changed_action=ChangeAction.CLOSED.value,
+        changed_name=pull_request.name
+    )
+
+    return HttpResponseRedirect(reverse('pull_request_detail', args=[repository_id, pr_id]))
+
+
+@login_required()
+def approve_pull_request(request, repository_id, pr_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    pull_request = get_object_or_404(PullRequest, id=pr_id, repository=repository)
+
+    if pull_request.status != PullRequestStatus.OPEN.value:
+        error_message = 'This pull request cannot be approved as it is not open.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.user in pull_request.reviewers.all():
+        pull_request.reviewed = True
+        pull_request.save()
+
+        return HttpResponseRedirect(reverse('pull_request_detail', args=[repository_id, pr_id]))
+
+    error_message = 'You are not authorized to approve this pull request.'
+    return render(request, 'error.html', {'error_message': error_message})
 
 
 def set_pull_request_form_fields(form, repository, user):
