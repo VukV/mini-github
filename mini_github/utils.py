@@ -16,8 +16,9 @@ def get_error_message(form):
     return error_message
 
 
-def create_history_item(user, history_type, changed_id, changed_action, changed_name):
+def create_history_item(repository, user, history_type, changed_id, changed_action, changed_name):
     History.objects.create(
+        repository=repository,
         user_changed=user,
         date_time_changed=timezone.now(),
         type=history_type,

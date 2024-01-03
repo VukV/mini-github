@@ -42,6 +42,7 @@ def add_branch(request, repository_id):
             branch.save()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.BRANCH.value,
                 changed_id=branch.id,
@@ -107,6 +108,7 @@ def delete_branch(request, repository_id, branch_id):
         return render(request, 'error.html', {'error_message': error_message})
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.BRANCH.value,
         changed_id=branch.id,

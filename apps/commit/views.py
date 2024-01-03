@@ -53,6 +53,7 @@ def add_commit(request, branch_id):
             commit.branches.add(branch)
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.COMMIT.value,
                 changed_id=branch.id,

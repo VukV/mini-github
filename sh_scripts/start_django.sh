@@ -3,7 +3,8 @@
 # collect static files
 python manage.py collectstatic --noinput
 
-# apply database migrations
+# database migrations
+python manage.py makemigrations
 python manage.py migrate
 
 # start the Django application using Gunicorn on port 8001

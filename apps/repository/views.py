@@ -38,6 +38,7 @@ def create_repository(request):
             main_branch.save()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.REPOSITORY.value,
                 changed_id=repository.id,
@@ -82,6 +83,7 @@ def delete_repository(request, repository_id):
         return render(request, 'error.html', {'error_message': error_message})
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.REPOSITORY.value,
         changed_id=repository.id,

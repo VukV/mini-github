@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Repository Header -->
+    <div class="row mb-3">
+        <div class="col">
+            <h2>{{ repository.name }} - Insights</h2>
+            <h5><small class="text-muted">{{ repository.public|yesno:"public,private" }}</small></h5>
+        </div>
+    </div>
+
+    <!-- Tabs for Navigation -->
+    <div class="row mb-4">
+        <div class="col">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository' repository.id %}">Code</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_milestones' repository.id %}">Milestones</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'repository_insights' repository.id %}">Insights</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <form method="get" action="." class="row g-3 align-items-center">
+        <div class="col-auto">
+            <label for="periodSelect" class="col-form-label">Select Period:</label>
+        </div>
+        <div class="col-auto">
+            <select id="periodSelect" name="period" class="form-select">
+                <option value="24h">Last 24 hours</option>
+                <option value="1 week" selected>Last week</option>
+                <option value="1 month">Last month</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Show</button>
+        </div>
+    </form>
+    <br>
+
+    <!-- Cards for stats -->
+    <div class="row mb-4">
+        <!-- Merged PRs -->
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Merged PRs</h5>
+                    <p class="card-text">{{ merged_prs }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opened PRs -->
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Opened PRs</h5>
+                    <p class="card-text">{{ opened_prs }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Closed Issues -->
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Closed Issues</h5>
+                    <p class="card-text">{{ closed_issues }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Opened Issues -->
+        <div class="col">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Opened Issues</h5>
+                    <p class="card-text">{{ opened_issues }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
