@@ -42,6 +42,7 @@ def add_milestone(request, repository_id):
             milestone.save()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.MILESTONE.value,
                 changed_id=milestone.id,
@@ -104,6 +105,7 @@ def close_milestone(request, repository_id, milestone_id):
     if milestone.closed:
         milestone.set_closed(False)
         utils.create_history_item(
+            repository=repository,
             user=request.user,
             history_type=HistoryType.MILESTONE.value,
             changed_id=milestone.id,
@@ -113,6 +115,7 @@ def close_milestone(request, repository_id, milestone_id):
     else:
         milestone.set_closed(True)
         utils.create_history_item(
+            repository=repository,
             user=request.user,
             history_type=HistoryType.MILESTONE.value,
             changed_id=milestone.id,
@@ -134,6 +137,7 @@ def delete_milestone(request, repository_id, milestone_id):
     milestone = get_object_or_404(Milestone, pk=milestone_id, repository=repository)
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.MILESTONE.value,
         changed_id=milestone.id,

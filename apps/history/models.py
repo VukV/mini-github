@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from apps.repository.models import Repository
+
 
 class HistoryType(Enum):
     REPOSITORY = 'repository'
@@ -36,6 +38,7 @@ class History(models.Model):
     changed_id = models.BigIntegerField(null=False)
     changed_action = models.CharField(max_length=20, choices=CHANGE_ACTION, null=False)
     changed_name = models.CharField(max_length=50, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return '{user} {action} {type}: {name}'.format(

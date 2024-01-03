@@ -67,6 +67,7 @@ def add_project(request, repository_id):
             project.save()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.PROJECT.value,
                 changed_id=project.id,
@@ -132,6 +133,7 @@ def delete_project(request, repository_id, project_id):
     project = get_object_or_404(Project, pk=project_id, repository=repository)
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.PROJECT.value,
         changed_id=project.id,

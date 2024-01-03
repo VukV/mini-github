@@ -73,8 +73,9 @@ def add_pull_request(request, repository_id):
             form.save_m2m()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
-                history_type=HistoryType.REPOSITORY.value,
+                history_type=HistoryType.PULL_REQUEST.value,
                 changed_id=pull_request.id,
                 changed_action=ChangeAction.OPENED.value,
                 changed_name=pull_request.name
@@ -122,8 +123,9 @@ def merge_pull_request(request, repository_id, pr_id):
         pull_request.save()
 
         utils.create_history_item(
+            repository=repository,
             user=request.user,
-            history_type=HistoryType.REPOSITORY.value,
+            history_type=HistoryType.PULL_REQUEST.value,
             changed_id=pull_request.id,
             changed_action=ChangeAction.MERGED.value,
             changed_name=pull_request.name
@@ -150,8 +152,9 @@ def close_pull_request(request, repository_id, pr_id):
     pull_request.save()
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
-        history_type=HistoryType.REPOSITORY.value,
+        history_type=HistoryType.PULL_REQUEST.value,
         changed_id=pull_request.id,
         changed_action=ChangeAction.CLOSED.value,
         changed_name=pull_request.name
