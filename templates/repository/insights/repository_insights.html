@@ -112,5 +112,39 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col">
+            <canvas id="commitChart" style="width: 400px; height: 200px;"></canvas>
+        </div>
+    </div>
+
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('commitChart').getContext('2d');
+    const commitChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: {{ commit_dates|safe }},
+            datasets: [{
+                label: 'Commits per Day',
+                data: {{ commit_counts|safe }},
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1,
+                barThickness: 20
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            maintainAspectRatio: false // Add this to keep the aspect ratio of the canvas
+        }
+    });
+</script>
+
 {% endblock content %}

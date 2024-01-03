@@ -73,7 +73,7 @@
                 </div>
                 <div class="card-body d-flex justify-content-between align-items-center">
                     <a href="{% url 'branch_commits' repository.get_default_branch.id %}" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
-                    <a href="{% url 'add_commit' repository.get_default_branch.id %}" class="btn btn-success btn-sm">New Commit</a>
+                    <a href="{% url 'add_commit' repository.get_default_branch.id %}" id="addCommitLink" class="btn btn-success btn-sm">New Commit</a>
                 </div>
             </div>
         </div>
@@ -111,6 +111,10 @@
 
         let urlTemplate = "{% url 'branch_commits' '0' %}";
         commitsLink.href = urlTemplate.replace('0', branchId);
+
+        let addCommitLink = document.getElementById('addCommitLink');
+        let addCommitUrlTemplate = "{% url 'add_commit' '0' %}";
+        addCommitLink.href = addCommitUrlTemplate.replace('0', branchId);
     }
 </script>
 {% endblock content %}
