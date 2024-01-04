@@ -1,6 +1,7 @@
 from django import forms
+from django.contrib.auth.models import User
 from django.test import TestCase
-from apps.authentication.forms import LoginForm, RegisterForm
+from apps.authentication.forms import LoginForm, RegisterForm, ProfileUpdateForm
 
 
 class LoginFormTest(TestCase):
@@ -59,3 +60,27 @@ class RegisterFormTest(TestCase):
         form = RegisterForm(data=form_data)
         self.assertFalse(form.is_valid())
         self.assertIn('password2', form.errors)
+
+
+class ProfileUpdateFormTest(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        User.objects.create_user(username='existing_user', email='existing@example.com', password='testpass123')
+
+    def test_profile_update_form_valid(self):
+        form_data = {'username': 'newuser', 'email': 'newuser@example.com'}
+        form = ProfileUpdateForm(data=form_data)
+        self.assertTrue(form.is_valid())
+
+    def test_profile_update_form_invalid_email(self):
+        form_data = {'username': 'newuser', 'email': 'invalid-email'}
+        form = ProfileUpdateForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('email', form.errors)
+
+    def test_profile_update_form_unique_username(self):
+        form_data = {'username': 'existing_user', 'email': 'newemail@example.com'}
+        form = ProfileUpdateForm(data=form_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn('username', form.errors)
