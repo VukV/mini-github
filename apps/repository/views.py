@@ -1,9 +1,13 @@
+import hashlib
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.shortcuts import render, get_object_or_404, redirect
 
 from apps.branch.models import Branch
+from apps.commit.models import Commit
 from apps.history.models import ChangeAction, HistoryType
 from apps.repository.forms import RepositoryForm
 from apps.repository.models import Repository
@@ -132,7 +136,7 @@ def add_collaborator(request, repository_id):
     repository = get_object_or_404(Repository, id=repository_id)
 
     if request.user != repository.owner:
-        error_message = 'You do not have permission to change repository name.'
+        error_message = 'You do not have permission to add collaborators.'
         return render(request, 'error.html', {'error_message': error_message})
 
     if request.method == 'POST':
@@ -152,7 +156,7 @@ def remove_collaborator(request, repository_id, user_id):
     repository = get_object_or_404(Repository, id=repository_id)
 
     if request.user != repository.owner:
-        error_message = 'You do not have permission to change repository name.'
+        error_message = 'You do not have permission to remove collaborators.'
         return render(request, 'error.html', {'error_message': error_message})
 
     if user_id == repository.owner:
@@ -167,3 +171,71 @@ def remove_collaborator(request, repository_id, user_id):
         messages.error(request, error_message)
 
     return redirect('repository_settings', repository_id=repository_id)
+
+
+@login_required()
+def repository_star(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.user in repository.stars.all():
+        repository.stars.remove(request.user)
+    else:
+        repository.stars.add(request.user)
+
+    return redirect('repository', repository_id=repository_id)
+
+
+@login_required()
+def repository_watch(request, repository_id):
+    repository = get_object_or_404(Repository, id=repository_id)
+
+    if not repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    if request.user in repository.watchers.all():
+        repository.watchers.remove(request.user)
+    else:
+        repository.watchers.add(request.user)
+
+    return redirect('repository', repository_id=repository_id)
+
+
+@login_required()
+def repository_fork(request, repository_id):
+    original_repository = get_object_or_404(Repository, id=repository_id)
+
+    if not original_repository.check_access(request.user):
+        error_message = 'You do not have access to this repository.'
+        return render(request, 'error.html', {'error_message': error_message})
+
+    with transaction.atomic():
+        forked_repository = Repository.objects.create(
+            name=f"{original_repository.name} (forked)",
+            public=original_repository.public,
+            owner=request.user
+        )
+
+        for branch in original_repository.branches.all():
+            forked_branch = Branch.objects.create(
+                name=branch.name,
+                default=branch.default,
+                repository=forked_repository
+            )
+
+            for commit in branch.commits.all():
+                hash_source = f"{commit.message}-{commit.repository.name}-{commit.date_time_created}-fork"
+                new_commit_hash = hashlib.sha256(hash_source.encode()).hexdigest()
+                Commit.objects.create(
+                    hash=new_commit_hash,
+                    message=commit.message,
+                    date_time_created=commit.date_time_created,
+                    author=commit.author,
+                    repository=forked_repository
+                ).branches.add(forked_branch)
+
+        return redirect('repository', repository_id=forked_repository.id)
