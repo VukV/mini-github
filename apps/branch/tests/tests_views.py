@@ -60,7 +60,7 @@ class AddBranchViewTests(TestCase):
 
     def test_add_branch_invalid_form(self):
         self.client.login(username='user_with_access', password='testpass123')
-        response = self.client.post(reverse('add_branch', args=[self.repository.id]), {'name': ''})  # Intentionally invalid
+        response = self.client.post(reverse('add_branch', args=[self.repository.id]), {'name': ''})
         self.assertEqual(response.status_code, 200)
         self.assertIn('Invalid form.', response.content.decode())
 
