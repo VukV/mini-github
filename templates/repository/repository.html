@@ -93,13 +93,19 @@
                 </form>
 
                 <!-- Watch Button -->
-                <form action="{% url 'repository_watch' repository.id %}" method="post">
+                <form action="{% url 'repository_watch' repository.id %}" method="post" class="me-2">
                     {% csrf_token %}
                     {% if request.user in repository.watchers.all %}
                         <button type="submit" class="btn btn-info btn-sm">Unwatch</button>
                     {% else %}
                         <button type="submit" class="btn btn-outline-primary btn-sm">Watch</button>
                     {% endif %}
+                </form>
+
+                <!-- Fork Button -->
+                <form action="{% url 'repository_fork' repository.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark btn-sm">Fork</button>
                 </form>
             </div>
 

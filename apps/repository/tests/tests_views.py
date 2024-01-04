@@ -1,9 +1,13 @@
+import hashlib
+
 from django.contrib.messages import get_messages
 from django.test import TestCase
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 from apps.branch.models import Branch
+from apps.commit.models import Commit
 from apps.repository.models import Repository
 
 
@@ -329,4 +333,46 @@ class RepositoryWatchViewTests(TestCase):
     def test_repository_watch_unauthenticated(self):
         self.client.logout()
         response = self.client.post(reverse('repository_watch', args=[self.repository.id]))
+        self.assertEqual(response.status_code, 302)
+
+
+class RepositoryForkViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_user(username='owner', password='testpass123')
+        cls.user = User.objects.create_user(username='user', password='testpass123')
+        cls.repository = Repository.objects.create(name='Test Repo', public=True, owner=cls.owner)
+
+        cls.branch = Branch.objects.create(name='main', default=True, repository=cls.repository)
+        cls.commit = Commit.objects.create(
+            hash='originalhash123',
+            message='Initial commit',
+            date_time_created=timezone.now(),
+            author=cls.owner,
+            repository=cls.repository
+        )
+        cls.branch.commits.add(cls.commit)
+
+    def setUp(self):
+        self.client.login(username='user', password='testpass123')
+
+    def create_commit_hash(self, commit, repo_name):
+        hash_source = f"{commit.message}-{repo_name}-{commit.date_time_created}-fork"
+        return hashlib.sha256(hash_source.encode()).hexdigest()
+
+    def test_fork_repository(self):
+        response = self.client.post(reverse('repository_fork', args=[self.repository.id]))
+        forked_repository = Repository.objects.get(name=f"{self.repository.name} (forked)")
+
+        self.assertEqual(forked_repository.owner, self.user)
+        self.assertEqual(forked_repository.public, self.repository.public)
+        self.assertRedirects(response, reverse('repository', args=[forked_repository.id]))
+
+        forked_branch = forked_repository.branches.get(name='main')
+        self.assertTrue(forked_branch.default)
+
+    def test_fork_repository_access_denied(self):
+        self.client.logout()
+        response = self.client.post(reverse('repository_fork', args=[self.repository.id]))
         self.assertEqual(response.status_code, 302)
