@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+
+<div class="container mt-3">
+    <br>
+    <div class="row">
+        <!-- Filters Column -->
+        <div class="col-md-3">
+            <h5>Filter by</h5>
+            <div class="list-group" id="search-filter">
+                <a href="#repositories" class="list-group-item list-group-item-action active" aria-controls="repositories" data-bs-toggle="list">Repositories</a>
+                <a href="#issues" class="list-group-item list-group-item-action" aria-controls="issues" data-bs-toggle="list">Issues</a>
+                <a href="#pull_requests" class="list-group-item list-group-item-action" aria-controls="pull_requests" data-bs-toggle="list">Pull Requests</a>
+                <a href="#commits" class="list-group-item list-group-item-action" aria-controls="commits" data-bs-toggle="list">Commits</a>
+            </div>
+        </div>
+
+        <!-- Results Column -->
+        <div class="col-md-9">
+            <h5>Search Results</h5>
+            <div class="tab-content" id="nav-tabContent">
+                <!-- Repositories Results -->
+                <div class="tab-pane fade show active" id="repositories">
+                    {% for repo in repositories %}
+                        <a href="{% url 'repository' repo.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ repo.name }}</h5>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div>
+                            No repositories found.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Issues Results -->
+                <div class="tab-pane fade" id="issues">
+                    {% for issue in issues %}
+                        <a href="{% url 'issue_detail' issue.repository.id issue.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ issue.name }} ({{ issue.status }})</h5>
+                                <p>{{ issue.date_created }}</p>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div>
+                            No issues found.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pull Requests Results -->
+                <div class="tab-pane fade" id="pull_requests">
+                    {% for pr in pull_requests %}
+                        <a href="{% url 'pull_request_detail' pr.repository.id pr.id %}" class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ pr.title }} ({{ pr.source.name }} -> {{ pr.target.name }})</h5>
+                                <p>{{ pr.repository.name }}, {{ pr.date_created }}</p>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <div>
+                            No pull requests found.
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Commits Results -->
+                <div class="tab-pane fade" id="commits">
+                    {% for commit in commits %}
+                        <div class="list-group-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">{{ commit.message }} ({{ commit.repository.name }})</h5>
+                                <p>{{ commit.author.username }}, {{ commit.date_time_created }}</p>
+                            </div>
+                        </div>
+                    {% empty %}
+                        <div>
+                            No commits found.
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let searchFilter = document.getElementById('search-filter');
+        searchFilter.addEventListener('click', function(e) {
+            if (e.target && e.target.matches("a.list-group-item-action")) {
+                e.preventDefault();
+                let currentActive = searchFilter.querySelector(".active");
+                if (currentActive) currentActive.classList.remove("active");
+                e.target.classList.add("active");
+
+                let currentTab = document.querySelector('.tab-content .tab-pane.active');
+                if (currentTab) currentTab.classList.remove("show", "active");
+
+                let newTab = document.getElementById(e.target.getAttribute("aria-controls"));
+                if (newTab) newTab.classList.add("show", "active");
+            }
+        });
+    });
+</script>
+
+{% endblock content %}

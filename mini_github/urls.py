@@ -24,6 +24,7 @@ urlpatterns = [
     path('authentication/', include('apps.authentication.urls')),
     path('', views.home, name='home'),
     path('dashboard/', views.dashboard, name='dashboard'),
+    path('search/', views.search, name='search'),
     path('branch/', include('apps.branch.urls')),
     path('commit/', include('apps.commit.urls')),
     path('history/', include('apps.history.urls')),
