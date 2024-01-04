@@ -20,6 +20,17 @@
             {% empty %}
                 <div>No repositories found.</div>
             {% endfor %}
+
+            <br>
+            <h4>Starred repositories</h4>
+            {% for starred_repo in starred_repositories %}
+                <div>
+                    <h6><a href="{% url 'repository' starred_repo.id %}">{{ starred_repo.name }}</a></h6>
+                    <hr>
+                </div>
+            {% empty %}
+                <div>No starred repositories.</div>
+            {% endfor %}
         </div>
 
         {% load cache %}
