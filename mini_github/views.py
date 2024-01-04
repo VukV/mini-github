@@ -26,10 +26,16 @@ def dashboard(request):
     repositories = Repository.objects.filter(
         Q(owner=current_user) | Q(collaborators=current_user)
     ).distinct()
+
+    starred_repositories = Repository.objects.filter(stars=current_user).distinct()
+    watched_repositories = Repository.objects.filter(watchers=current_user).distinct()
+
     recent_activity = History.objects.filter(user_changed=current_user).order_by('-date_time_changed')[:5]
 
     context = {
         'repositories': repositories,
+        'starred_repositories': starred_repositories,
+        'watched_repositories': watched_repositories,
         'recent_activity': recent_activity,
     }
 
