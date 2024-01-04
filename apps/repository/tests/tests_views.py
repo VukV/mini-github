@@ -212,7 +212,7 @@ class AddCollaboratorViewTests(TestCase):
         self.client.login(username='non_owner', password='testpass123')
         response = self.client.post(reverse('add_collaborator', args=[self.repository.id]), {'username': 'new_collab'})
         self.assertEqual(response.status_code, 200)
-        self.assertIn('You do not have permission to change repository name.', response.content.decode())
+        self.assertIn('You do not have permission to add collaborators.', response.content.decode())
         self.repository.refresh_from_db()
         self.assertNotIn(self.user_to_add, self.repository.collaborators.all())
 
@@ -250,7 +250,7 @@ class RemoveCollaboratorViewTests(TestCase):
         self.client.login(username='non_owner', password='testpass123')
         response = self.client.post(reverse('remove_collaborator', args=[self.repository.id, self.collaborator.id]))
         self.assertEqual(response.status_code, 200)
-        self.assertIn('You do not have permission to change repository name.', response.content.decode())
+        self.assertIn('You do not have permission to remove collaborators.', response.content.decode())
         self.repository.refresh_from_db()
         self.assertIn(self.collaborator, self.repository.collaborators.all())
 
@@ -265,4 +265,68 @@ class RemoveCollaboratorViewTests(TestCase):
 
     def test_remove_collaborator_unauthenticated_access(self):
         response = self.client.post(reverse('remove_collaborator', args=[self.repository.id, self.collaborator.id]))
+        self.assertEqual(response.status_code, 302)
+
+
+class RepositoryStarViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_user(username='owner', password='testpass123')
+        cls.user = User.objects.create_user(username='user', password='testpass123')
+        cls.repository = Repository.objects.create(name='Test Repo', public=False, owner=cls.owner)
+        cls.branch = Branch.objects.create(name='main', default=True, repository=cls.repository)
+        cls.repository.collaborators.add(cls.user)
+
+    def setUp(self):
+        self.client.login(username='user', password='testpass123')
+
+    def test_star_repository(self):
+        response = self.client.post(reverse('repository_star', args=[self.repository.id]))
+        self.repository.refresh_from_db()
+        self.assertIn(self.user, self.repository.stars.all())
+        self.assertRedirects(response, reverse('repository', args=[self.repository.id]))
+
+    def test_unstar_repository(self):
+        self.repository.stars.add(self.user)
+        response = self.client.post(reverse('repository_star', args=[self.repository.id]))
+        self.repository.refresh_from_db()
+        self.assertNotIn(self.user, self.repository.stars.all())
+        self.assertRedirects(response, reverse('repository', args=[self.repository.id]))
+
+    def test_repository_star_unauthenticated(self):
+        self.client.logout()
+        response = self.client.post(reverse('repository_star', args=[self.repository.id]))
+        self.assertEqual(response.status_code, 302)
+
+
+class RepositoryWatchViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.owner = User.objects.create_user(username='owner', password='testpass123')
+        cls.user = User.objects.create_user(username='user', password='testpass123')
+        cls.repository = Repository.objects.create(name='Test Repo', public=False, owner=cls.owner)
+        cls.branch = Branch.objects.create(name='main', default=True, repository=cls.repository)
+        cls.repository.collaborators.add(cls.user)
+
+    def setUp(self):
+        self.client.login(username='user', password='testpass123')
+
+    def test_watch_repository(self):
+        response = self.client.post(reverse('repository_watch', args=[self.repository.id]))
+        self.repository.refresh_from_db()
+        self.assertIn(self.user, self.repository.watchers.all())
+        self.assertRedirects(response, reverse('repository', args=[self.repository.id]))
+
+    def test_unwatch_repository(self):
+        self.repository.watchers.add(self.user)
+        response = self.client.post(reverse('repository_watch', args=[self.repository.id]))
+        self.repository.refresh_from_db()
+        self.assertNotIn(self.user, self.repository.watchers.all())
+        self.assertRedirects(response, reverse('repository', args=[self.repository.id]))
+
+    def test_repository_watch_unauthenticated(self):
+        self.client.logout()
+        response = self.client.post(reverse('repository_watch', args=[self.repository.id]))
         self.assertEqual(response.status_code, 302)

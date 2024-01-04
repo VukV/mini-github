@@ -80,9 +80,33 @@
 
         <!-- Sidebar Area -->
         <div class="col-md-3">
+            <!-- Star and Watch Buttons -->
+            <div class="mb-3 d-flex align-items-center justify-content-start">
+                <!-- Star Button -->
+                <form action="{% url 'repository_star' repository.id %}" method="post" class="me-2">
+                    {% csrf_token %}
+                    {% if request.user in repository.stars.all %}
+                        <button type="submit" class="btn btn-warning btn-sm">Unstar</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-outline-warning btn-sm">Star</button>
+                    {% endif %}
+                </form>
+
+                <!-- Watch Button -->
+                <form action="{% url 'repository_watch' repository.id %}" method="post">
+                    {% csrf_token %}
+                    {% if request.user in repository.watchers.all %}
+                        <button type="submit" class="btn btn-info btn-sm">Unwatch</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Watch</button>
+                    {% endif %}
+                </form>
+            </div>
+
             <div class="mb-3">
                 <strong>About</strong>
                 <p>{{ repository.stars.count }} stars</p>
+                <p>{{ repository.watchers.count }} watchers</p>
             </div>
             <div>
                 <strong>Collaborators</strong>
