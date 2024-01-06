@@ -13,4 +13,7 @@ urlpatterns = [
     path('rename/<int:repository_id>/', views.rename_repository, name='rename_repository'),
     path('add_collaborator/<int:repository_id>/', views.add_collaborator, name='add_collaborator'),
     path('remove_collaborator/<int:repository_id>/<int:user_id>/', views.remove_collaborator, name='remove_collaborator'),
+    path('star/<int:repository_id>/', views.repository_star, name='repository_star'),
+    path('watch/<int:repository_id>/', views.repository_watch, name='repository_watch'),
+    path('fork/<int:repository_id>/', views.repository_fork, name='repository_fork'),
 ]

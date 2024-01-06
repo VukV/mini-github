@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login as auth_login
 from django.contrib.auth import logout as auth_logout
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ProfileUpdateForm
 from mini_github import utils
 
 
@@ -57,3 +57,17 @@ def register(request):
 def logout(request):
     auth_logout(request)
     return redirect('login')
+
+
+@login_required()
+def my_profile(request):
+    if request.method == 'POST':
+        form = ProfileUpdateForm(request.POST, instance=request.user)
+
+        if form.is_valid():
+            form.save()
+            return redirect('my_profile')
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+
+    return render(request, 'auth/my_profile.html', {'form': form})

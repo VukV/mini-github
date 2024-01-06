@@ -3,6 +3,8 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 
+from apps.authentication.forms import ProfileUpdateForm
+
 
 class LoginViewTests(TestCase):
 
@@ -71,3 +73,39 @@ class LogoutViewTests(TestCase):
 
         response = self.client.get(reverse('login'))
         self.assertFalse(response.context['user'].is_authenticated)
+
+
+class MyProfileViewTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = User.objects.create_user(username='testuser', email='test@example.com', password='testpass123')
+
+    def setUp(self):
+        self.client.login(username='testuser', password='testpass123')
+
+    def test_profile_view_get(self):
+        response = self.client.get(reverse('my_profile'))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'auth/my_profile.html')
+        self.assertIsInstance(response.context['form'], ProfileUpdateForm)
+
+    def test_profile_update_valid_post(self):
+        form_data = {'username': 'updateduser', 'email': 'updated@example.com'}
+        response = self.client.post(reverse('my_profile'), form_data)
+        self.assertRedirects(response, reverse('my_profile'))
+        updated_user = User.objects.get(id=self.user.id)
+        self.assertEqual(updated_user.username, 'updateduser')
+        self.assertEqual(updated_user.email, 'updated@example.com')
+
+    def test_profile_update_invalid_post(self):
+        form_data = {'username': '', 'email': 'invalid-email'}
+        response = self.client.post(reverse('my_profile'), form_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertFormError(response, 'form', 'username', 'This field is required.')
+        self.assertFormError(response, 'form', 'email', 'Enter a valid email address.')
+
+    def test_profile_view_unauthenticated_access(self):
+        self.client.logout()
+        response = self.client.get(reverse('my_profile'))
+        self.assertNotEqual(response.status_code, 200)

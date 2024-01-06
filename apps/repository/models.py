@@ -27,3 +27,6 @@ class Repository(models.Model):
                 return True
             else:
                 return False
+
+    def get_default_branch(self):
+        return self.branches.filter(default=True).first()

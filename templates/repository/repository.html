@@ -25,7 +25,7 @@
                     <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Pull Requests</a>
+                    <a class="nav-link" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
@@ -37,7 +37,7 @@
                     <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Insights</a>
+                    <a class="nav-link" href="{% url 'repository_insights' repository.id %}">Insights</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'repository_settings' repository.id %}">Settings</a>
@@ -49,18 +49,70 @@
     <!-- Repository Content and Sidebar -->
     <div class="row">
         <div class="col-md-9">
-            <!-- Placeholder -->
-            <div class="border p-3">
-                <p>Placeholder for repository content.</p>
+            <!-- Branch Selector and Branches Link -->
+            <div class="mb-3 d-flex align-items-center">
+                <div class="dropdown me-2">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" id="branchDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        {{ repository.get_default_branch.name|default:"Select branch" }}
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="branchDropdown">
+                        {% for branch in repository.branches.all %}
+                        <li><a class="dropdown-item" href="#" onclick="updateCommits('{{ branch.name }}', '{{ branch.id }}', '{{ branch.commits.count }}')">{{ branch.name }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <a href="{% url 'repository_branches' repository.id %}">
+                    {{ repository.branches.count }} branches
+                </a>
+            </div>
+
+            <!-- Placeholder for repository content -->
+            <div class="card">
+                <div class="card-header">
+                    Commits
+                </div>
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <a href="{% url 'branch_commits' repository.get_default_branch.id %}" id="commitsLink">{{ repository.get_default_branch.commits.count }} commits on this branch</a>
+                    <a href="{% url 'add_commit' repository.get_default_branch.id %}" id="addCommitLink" class="btn btn-success btn-sm">New Commit</a>
+                </div>
             </div>
         </div>
 
         <!-- Sidebar Area -->
         <div class="col-md-3">
+            <!-- Star and Watch Buttons -->
+            <div class="mb-3 d-flex align-items-center justify-content-start">
+                <!-- Star Button -->
+                <form action="{% url 'repository_star' repository.id %}" method="post" class="me-2">
+                    {% csrf_token %}
+                    {% if request.user in repository.stars.all %}
+                        <button type="submit" class="btn btn-warning btn-sm">Unstar</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-outline-warning btn-sm">Star</button>
+                    {% endif %}
+                </form>
+
+                <!-- Watch Button -->
+                <form action="{% url 'repository_watch' repository.id %}" method="post" class="me-2">
+                    {% csrf_token %}
+                    {% if request.user in repository.watchers.all %}
+                        <button type="submit" class="btn btn-info btn-sm">Unwatch</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-outline-primary btn-sm">Watch</button>
+                    {% endif %}
+                </form>
+
+                <!-- Fork Button -->
+                <form action="{% url 'repository_fork' repository.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-dark btn-sm">Fork</button>
+                </form>
+            </div>
+
             <div class="mb-3">
                 <strong>About</strong>
                 <p>{{ repository.stars.count }} stars</p>
-                <p>{{ repository.watchers.count }} watching</p>
+                <p>{{ repository.watchers.count }} watchers</p>
             </div>
             <div>
                 <strong>Collaborators</strong>
@@ -78,4 +130,20 @@
         </div>
     </div>
 </div>
+
+<script>
+    function updateCommits(branchName, branchId, commitCount) {
+        document.getElementById('branchDropdown').textContent = branchName;
+
+        let commitsLink = document.getElementById('commitsLink');
+        commitsLink.textContent = commitCount + ' commits on this branch';
+
+        let urlTemplate = "{% url 'branch_commits' '0' %}";
+        commitsLink.href = urlTemplate.replace('0', branchId);
+
+        let addCommitLink = document.getElementById('addCommitLink');
+        let addCommitUrlTemplate = "{% url 'add_commit' '0' %}";
+        addCommitLink.href = addCommitUrlTemplate.replace('0', branchId);
+    }
+</script>
 {% endblock content %}

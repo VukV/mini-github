@@ -79,6 +79,7 @@ def add_issue(request, repository_id):
             form.save_m2m()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.ISSUE.value,
                 changed_id=issue.id,
@@ -113,6 +114,7 @@ def close_issue(request, repository_id, issue_id):
 
     if issue.closed:
         utils.create_history_item(
+            repository=repository,
             user=request.user,
             history_type=HistoryType.ISSUE.value,
             changed_id=issue.id,
@@ -121,6 +123,7 @@ def close_issue(request, repository_id, issue_id):
         )
     else:
         utils.create_history_item(
+            repository=repository,
             user=request.user,
             history_type=HistoryType.ISSUE.value,
             changed_id=issue.id,
@@ -176,6 +179,7 @@ def delete_issue(request, repository_id, issue_id):
     issue = get_object_or_404(Issue, pk=issue_id, repository=repository)
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.ISSUE.value,
         changed_id=issue.id,

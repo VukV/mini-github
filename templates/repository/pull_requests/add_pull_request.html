@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block header %}
+{% include "navbar.html" %}
+{% endblock header %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            {% include 'messages.html' %}
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header">
+                    <h4>Open a new pull request</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        <!-- Pull Request Name Field -->
+                        <div class="mb-3">
+                            <label for="id_name" class="form-label">Pull Request Name:</label>
+                            <input type="text" name="name" id="id_name" class="form-control" required>
+                        </div>
+                        <!-- Source Branch Field -->
+                        <div class="mb-3">
+                            <label for="id_source" class="form-label">Source Branch:</label>
+                            <select name="source" id="id_source" class="form-control" required>
+                                <option value="">--- Select Source Branch ---</option>
+                                {% for branch in form.fields.source.queryset %}
+                                    <option value="{{ branch.id }}">{{ branch.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Target Branch Field -->
+                        <div class="mb-3">
+                            <label for="id_target" class="form-label">Target Branch:</label>
+                            <select name="target" id="id_target" class="form-control" required>
+                                <option value="">--- Select Target Branch ---</option>
+                                {% for branch in form.fields.target.queryset %}
+                                    <option value="{{ branch.id }}">{{ branch.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Reviewers Field -->
+                        <div class="mb-3">
+                            <label for="id_reviewers" class="form-label">Reviewers:</label>
+                            <select name="reviewers" id="id_reviewers" class="form-control" multiple required>
+                                {% for user in form.fields.reviewers.queryset %}
+                                    <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Labels -->
+                        <div class="mb-3">
+                            <label for="id_labels" class="form-label">Labels:</label>
+                            <select name="labels" id="id_labels" class="form-control" multiple>
+                                {% for label in repository.labels.all %}
+                                    <option value="{{ label.id }}">{{ label.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center gap-2">
+                            <button type="submit" class="btn btn-primary">Open Pull Request</button>
+                            <a href="{% url 'repository_pull_requests' repository.id %}" class="btn btn-outline-primary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

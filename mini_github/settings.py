@@ -14,7 +14,11 @@ from pathlib import Path
 import sys
 import os
 
-PROD = True
+# sudo docker-compose build
+# sudo docker-compose up
+# sudo docker-compose down
+
+PROD = False
 DJANGO_TESTING = os.environ.get('DJANGO_TESTING') == 'True'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -144,7 +148,7 @@ else:
         }
     }
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://127.0.0.1:8000']
 CSRF_COOKIE_SECURE = False
 
 

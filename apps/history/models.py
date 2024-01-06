@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.utils import timezone
 
+from apps.repository.models import Repository
+
 
 class HistoryType(Enum):
     REPOSITORY = 'repository'
@@ -10,7 +12,9 @@ class HistoryType(Enum):
     MILESTONE = 'milestone'
     ISSUE = 'issue'
     LABEL = 'label'
-    # TODO check for more types
+    BRANCH = 'branch'
+    COMMIT = 'commit'
+    PULL_REQUEST = 'pull request'
 
 
 HISTORY_TYPE = [(history_type.name, history_type.value) for history_type in HistoryType]
@@ -21,6 +25,7 @@ class ChangeAction(Enum):
     DELETED = 'deleted'
     OPENED = 'opened'
     CLOSED = 'closed'
+    MERGED = 'merged'
 
 
 CHANGE_ACTION = [(change_action.name, change_action.value) for change_action in ChangeAction]
@@ -33,6 +38,7 @@ class History(models.Model):
     changed_id = models.BigIntegerField(null=False)
     changed_action = models.CharField(max_length=20, choices=CHANGE_ACTION, null=False)
     changed_name = models.CharField(max_length=50, null=False)
+    repository = models.ForeignKey(Repository, on_delete=models.CASCADE, null=False)
 
     def __str__(self):
         return '{user} {action} {type}: {name}'.format(

@@ -43,6 +43,7 @@ def add_label(request, repository_id):
             label.save()
 
             utils.create_history_item(
+                repository=repository,
                 user=request.user,
                 history_type=HistoryType.LABEL.value,
                 changed_id=label.id,
@@ -105,6 +106,7 @@ def delete_label(request, repository_id, label_id):
         return redirect_on_delete(request, error_message, repository)
 
     utils.create_history_item(
+        repository=repository,
         user=request.user,
         history_type=HistoryType.LABEL.value,
         changed_id=label.id,

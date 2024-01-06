@@ -25,7 +25,7 @@
                     <a class="nav-link" href="{% url 'repository_issues' repository.id %}">Issues</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Pull Requests</a>
+                    <a class="nav-link" href="{% url 'repository_pull_requests' repository.id %}">Pull Requests</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'repository_projects' repository.id %}">Projects</a>
@@ -37,7 +37,7 @@
                     <a class="nav-link" href="{% url 'repository_labels' repository.id %}">Labels</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Insights</a>
+                    <a class="nav-link" href="{% url 'repository_insights' repository.id %}">Insights</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" aria-current="page" href="{% url 'repository_settings' repository.id %}">Settings</a>
