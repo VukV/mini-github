@@ -24,7 +24,6 @@ class Commit {
     hash: String
     message: String
     dateTimeCreated: DateTime
-
 }
 
 class PullRequest {
@@ -87,6 +86,12 @@ class History {
     changedName: String
 }
 
+class Comment {
+    id: Long
+    dateTimeCreated: DateTime
+    text: String
+}
+
 enum HistoryType {
     REPOSITORY
     PROJECT
@@ -129,6 +134,9 @@ PullRequest "0..*" -- "0..*" Label
 PullRequest "0..*" -- "1" Branch : source
 PullRequest "0..*" -- "1" Branch : target
 PullRequest "0..*" -- "1" Repository
+Comment "0..*" -- "1" User : author
+Comment "0..*" -- "0..1" Comment : replies
+Comment "0..*" -- "1" PullRequest
 
 History "0..*" -- "1" User
 
