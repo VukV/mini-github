@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.authentication',
     'apps.branch',
     'apps.commit',
+    'apps.comment',
     'apps.history',
     'apps.issue',
     'apps.label',

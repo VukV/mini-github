@@ -33,3 +33,6 @@ class PullRequest(models.Model):
 
     def __str__(self):
         return '{name} by {author}'.format(name=self.name, author=self.author.username)
+
+    def parent_comments(self):
+        return self.comments.filter(replied_to__isnull=True)
