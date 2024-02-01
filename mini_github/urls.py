@@ -27,6 +27,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('branch/', include('apps.branch.urls')),
     path('commit/', include('apps.commit.urls')),
+    path('comment/', include('apps.comment.urls')),
     path('history/', include('apps.history.urls')),
     path('issue/', include('apps.issue.urls')),
     path('label/', include('apps.label.urls')),
