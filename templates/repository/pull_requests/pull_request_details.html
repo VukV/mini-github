@@ -103,5 +103,101 @@
         </div>
     </div>
 
+    <br>
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Comments</h4>
+            <div class="mb-3">
+                {% for comment in pull_request.parent_comments %}
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ comment.author.username }}</h5>
+                            <p class="card-text">{{ comment.text }}</p>
+                            <p class="text-muted"><small>{{ comment.date_created|date:"N j, Y H:i" }}</small></p> <!-- Date format -->
+                            <a href="#" class="btn btn-secondary btn-sm" onclick="openReplyModal('{{ comment.id }}')">Reply</a>
+                        </div>
+                    </div>
+                    <!-- Replies -->
+                    {% for reply in comment.replies.all %}
+                        <div class="card mb-2 ms-4">
+                            <div class="card-body">
+                                <h6 class="card-title">{{ reply.author.username }}</h6>
+                                <p class="card-text">{{ reply.text }}</p>
+                                <p class="text-muted"><small>{{ reply.date_created|date:"N j, Y H:i" }}</small></p> <!-- Date format -->
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% empty %}
+                    <p>No comments yet.</p>
+                {% endfor %}
+            </div>
+            <!-- Add Comment Button -->
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCommentModal">
+                Add Comment
+            </button>
+
+            <!-- Add Comment Modal -->
+            <div class="modal fade" id="addCommentModal" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCommentModalLabel">Add a new comment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'add_comment' pull_request.id %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    <label for="commentText" class="form-label">Your Comment</label>
+                                    <textarea class="form-control" id="commentText" name="text" rows="3" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Post Comment</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reply Comment Modal -->
+            <div class="modal fade" id="replyCommentModal" tabindex="-1" aria-labelledby="replyCommentModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="replyCommentModalLabel">Reply to Comment</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form method="post" action="{% url 'reply_comment' pull_request.id '0' %}" id="replyForm">
+                                {% csrf_token %}
+                                <input type="hidden" name="replied_to" id="repliedToId" value="">
+                                <div class="mb-3">
+                                    <label for="replyText" class="form-label">Your Reply</label>
+                                    <textarea class="form-control" id="replyText" name="text" rows="3" required></textarea>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Post Reply</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>
+
+<script>
+    function openReplyModal(commentId) {
+        document.getElementById('repliedToId').value = commentId;
+        document.getElementById('replyForm').action = "{% url 'reply_comment' pull_request.id '0' %}".replace('/0/', '/' + commentId + '/');
+        new bootstrap.Modal(document.getElementById('replyCommentModal')).show();
+    }
+</script>
+
+
 {% endblock content %}
