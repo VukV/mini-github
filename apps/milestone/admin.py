@@ -1,3 +1,6 @@
 from django.contrib import admin
 
-# Register your models here.
+from apps.milestone.models import Milestone
+
+
+admin.site.register(Milestone)
